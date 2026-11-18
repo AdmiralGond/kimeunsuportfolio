@@ -130,7 +130,7 @@ function zoomProgress(t,min){const u=t<.5?2*t:2*t-1;const half=(1-Math.cos(Math.
 function navigate(next){if(next<0||next>=ORDER.length)return;
  if(state.busy){state.queued=next;return}
  if(next===state.index)return;
- const from=state.index,min=stopZoom(from,next),duration=1880;
+ const from=state.index,min=stopZoom(from,next),duration=M.transitionMs;
  state.busy=true;state.target=next;
  const targetPage=pageMap.get(ORDER[next]);targetPage.dataset.inTransit='true';if(ORDER[next]!=='profile')resetReport(targetPage);
  const start=performance.now(),origin=M.camera[from],destination=M.camera[next];let midpointSwapped=false;

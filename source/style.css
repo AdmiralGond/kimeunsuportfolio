@@ -15,9 +15,9 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 #world-grid{opacity:.6}
 #ship-line{opacity:.20;filter:drop-shadow(0 0 1px rgba(166,194,229,.15))}
 #world-pages{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
-.world-page{position:absolute;width:1905px;height:911px;pointer-events:none;transform-origin:0 0;visibility:hidden}
-.world-page[data-active="true"]{visibility:visible;pointer-events:auto}
-.world-page[data-in-transit="true"]{visibility:visible;pointer-events:none}
+.world-page{position:absolute;width:1905px;height:911px;pointer-events:none;transform-origin:0 0}
+.world-page[data-active="true"]{pointer-events:auto}
+.world-page[data-in-transit="true"]{pointer-events:none}
 #frame{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform;pointer-events:none}
 #frame-art{position:absolute;inset:0;width:1905px;height:911px;max-width:none;display:block;pointer-events:none}
 #frame button{pointer-events:auto}
@@ -41,11 +41,11 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 #quote-profile{position:absolute;left:249.62px;top:275px;width:1035px;font-size:16px;line-height:1.45;color:#f1f8f9}
 #quote-profile .credit{font-size:14px;font-weight:300;color:#e2edf0}
 #profile-photos{position:absolute;left:250.12px;top:354.29px;display:grid;grid-template-columns:104.09px 104.09px 210.11px;gap:28.08px;height:129.42px}
-#profile-photos img{display:block;width:100%;height:129.42px;object-fit:fill;border:1px solid #f3f0e9}
+#profile-photos img{display:block;width:auto;max-width:none;height:129.42px;object-fit:unset;flex-shrink:0;border:0}
 #profile-image-caption{position:absolute;left:513.99px;top:487.5px;width:210px;height:18px;white-space:nowrap;color:#f1f8f9;font-size:12px;line-height:1.45;overflow:visible}
-#identity{position:absolute;left:930.4px;top:307px;width:360px;color:#1c696b}
-#identity h2{margin:0 0 12px;font-size:28px;line-height:1.25;font-weight:500;letter-spacing:-.3px}
-#identity-cells{margin-top:15px;font-size:16px;line-height:1.45;word-break:keep-all}
+#identity{position:absolute;left:930.4px;top:275px;width:360px;color:#1c696b}
+#identity h2{margin:0;font-size:28px;line-height:1.25;font-weight:500;letter-spacing:-.3px}
+#identity-cells{margin-top:44.29px;font-size:16px;line-height:1.45;word-break:keep-all}
 #identity-cells .row{display:flex;gap:12px;min-height:23.2px}
 #identity-cells .key{min-width:83px;flex:none}
 #identity-cells .value{overflow-wrap:anywhere}
@@ -74,8 +74,8 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 .report-body th{background:#18495b;color:#8af5e6;font-weight:500}
 .report-body a{overflow-wrap:anywhere}
 .report-media{position:absolute;z-index:1;left:21.5px;right:21.5px;bottom:23px;height:181.39px;display:flex;justify-content:space-between;pointer-events:none}
-.media-slot{flex:0 0 450.17px;width:450.17px;height:181.39px;overflow:hidden;pointer-events:auto;border:1px solid #f3f0e9}
-.media-slot img{display:block;width:100%;height:100%;object-fit:fill}
+.media-slot{display:flex;align-items:center;justify-content:center;flex:0 0 450.17px;width:450.17px;height:181.39px;overflow:hidden;pointer-events:auto;border:1px solid #f3f0e9}
+.media-slot img{display:block;height:100%;width:auto;max-width:none;max-height:none;flex-shrink:0;object-fit:unset}
 .report-page.media-active .report-copy{bottom:12px}
 /* Approved 952x456 guidance scaled into the native 1905x911 stage: wheel 44->88, panel 86->172, button 48x15->96x30. */
 #helm-control{position:absolute;right:20px;bottom:0;z-index:50;width:198px;height:88px;pointer-events:none;overflow:visible}
@@ -94,8 +94,11 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 .report-body table[data-table="play_subculture"]{table-layout:fixed;width:100%;font-size:16px;line-height:1.45}
 .report-body table[data-table="play_subculture"] td,.report-body table[data-table="play_subculture"] th{word-break:keep-all;overflow-wrap:normal;hyphens:none;white-space:normal}
 /* Profile-only separate screen-space hint. Vertical writing, never rotated text. */
-#scroll-guide{position:absolute;left:155px;top:505px;width:35px;height:262px;display:flex;justify-content:space-between;align-items:flex-start;z-index:20;pointer-events:none;color:#87bbb9}
+#scroll-guide{position:absolute;right:180px;top:505px;width:35px;height:262px;display:flex;justify-content:space-between;align-items:flex-start;z-index:20;pointer-events:none;color:#87bbb9}
 #scroll-guide[hidden]{display:none!important}
 .scroll-guide-text{writing-mode:vertical-rl;text-orientation:upright;white-space:nowrap;font-family:Nexon,sans-serif;font-size:8px;font-weight:700;line-height:1.2;letter-spacing:.1px}
 .scroll-guide-arrow{position:relative;display:block;margin-top:6px;width:1px;height:225px;background:currentColor;opacity:.85}
 .scroll-guide-arrow:after{content:'';position:absolute;left:-3.5px;bottom:0;width:7px;height:7px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg)}
+
+/* Original image guide widths and positions remain fixed; source images resize solely by height. */
+#profile-photos{overflow:visible}#profile-photos .profile-slot{height:129.42px;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid #f3f0e9}

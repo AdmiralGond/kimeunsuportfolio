@@ -12,65 +12,24 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Publish v0.6.0
+      - name: Publish v0.7.0
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.6.0.zip" "$GITHUB_SHA" -- index.html resource source
-          if ! gh release view v0.6.0 >/dev/null 2>&1; then
-            gh release create v0.6.0 --target "$GITHUB_SHA" --title 'Portfolio Site v0.6.0' --notes '카메라 및 보고서 개선'
+          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.7.0.zip" "$GITHUB_SHA" -- index.html resource source
+          cat > "$RUNNER_TEMP/v0.7.0-notes.md" <<'EOF'
+          - A1 하단 우측 여백으로 세로쓰기 스크롤 안내 이동
+          - 페이지 전환을 1,200ms로 조정하고 직선 경로·완만한 속도 곡선 유지
+          - 밀리터리 게임 경험 표를 본문 위로 배치
+          - 페이지 콘텐츠 상시 표시 및 격납고별 X좌표 간격 정렬
+          - 프로필 제원 제목·본문의 상단 정렬 수정
+          - 검은 이미지 37개를 PNG로 변경하고 높이 기준 정비율 확대·축소 적용
+          EOF
+          if ! gh release view v0.7.0 >/dev/null 2>&1; then
+            gh release create v0.7.0 --target "$GITHUB_SHA" --title 'Portfolio Site v0.7.0' --notes-file "$RUNNER_TEMP/v0.7.0-notes.md"
+          else
+            gh release edit v0.7.0 --notes-file "$RUNNER_TEMP/v0.7.0-notes.md"
           fi
-          gh release upload v0.6.0 "$RUNNER_TEMP/kimeunsuportfolio-v0.6.0.zip" --clobber
-      - name: Keep change-only release notes
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          for tag in v0.1.0 v0.2.0 v0.3.0 v0.4.0 v0.5.0 v0.6.0; do
-            case "$tag" in
-              v0.1.0)
-                printf '%s\n' \
-                  '- 포트폴리오 기본 화면과 공용 프레임 구성' \
-                  '- 함선 SVG 배경 및 페이지별 키워드 인터페이스 추가' > "$RUNNER_TEMP/release-notes.md"
-                ;;
-              v0.2.0)
-                printf '%s\n' \
-                  '- NEXON Lv2 Gothic OTF 4종 포함' \
-                  '- 원본 파일명 기준 SVG 이미지 교체 슬롯 추가' \
-                  '- 키워드·페이지 데이터 및 조타륜 회전 구성' > "$RUNNER_TEMP/release-notes.md"
-                ;;
-              v0.3.0)
-                printf '%s\n' \
-                  '- 공용 프레임 SVG와 프로필 레이아웃 수정' \
-                  '- 격납고 중심 카메라 이동 적용' \
-                  '- 조타륜과 조타대 프레임 신규 제작' > "$RUNNER_TEMP/release-notes.md"
-                ;;
-              v0.4.0)
-                printf '%s\n' \
-                  '- 페이지 콘텐츠와 공용 UI의 좌표계 분리' \
-                  '- 격납고 카메라와 프로필 배치 수정' \
-                  '- 도구 패널 형상·조타 장치 결합 수정' > "$RUNNER_TEMP/release-notes.md"
-                ;;
-              v0.5.0)
-                printf '%s\n' \
-                  '- 무장 리스트 도형 확장 및 폰트 규칙 복원' \
-                  '- 일본어 글리프 표시 수정' \
-                  '- 보고서 대각선과 프로필 이미지 비율 수정' \
-                  '- 배포 파일 구성 정리' > "$RUNNER_TEMP/release-notes.md"
-                ;;
-              v0.6.0)
-                printf '%s\n' \
-                  '- 서브컬처 게임 경험 표의 링크·줄바꿈·5열 비율 수정' \
-                  '- 카메라 배율과 공용 UI 표시 크기 분리' \
-                  '- 페이지 전환 시간 2배 및 중간점 저속의 두 구간 속도 연출 적용' \
-                  '- A1 전용 세로쓰기 스크롤 안내와 긴 아래 화살표 추가' \
-                  '- 보고서 본문 스크롤바 제거 및 이미지 영역과 무관한 전체 본문 배치' > "$RUNNER_TEMP/release-notes.md"
-                ;;
-            esac
-            if gh release view "$tag" >/dev/null 2>&1; then
-              gh release edit "$tag" --notes-file "$RUNNER_TEMP/release-notes.md"
-            fi
-          done
+          gh release upload v0.7.0 "$RUNNER_TEMP/kimeunsuportfolio-v0.7.0.zip" --clobber

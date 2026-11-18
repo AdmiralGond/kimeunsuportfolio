@@ -14,3 +14,4 @@ helm_frame_height_px,42
 helm_wheel_diameter_px,44
 helm_button_width_px,48
 helm_button_height_px,15
+camera_transition_ms,1200
