@@ -5,8 +5,10 @@ const ORDER=M.pages, CODES=M.pageCodes, SCALE=M.cameraScale||9.2, VX=952.5, VY=4
 const GUIDE='키워드 버튼 위에 마우스 포인터를 올리거나 버튼을 누르면 해당 키워드의 내용이 여기에 표시됩니다.';
 const NAV=[['프로필',0],['소개',1],['게임을 개발하고,',2],['게임을 플레이하며,',3],['게임을 관찰한다.',4],['1인 게임 개발 프로젝트',5],['기획 문서 작성 이력',7],['게임 플레이 이력',8]];
 const escapeHTML=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function rich(v){return escapeHTML(v).replace(/&lt;br\s*\/?&gt;/gi,'<br>')
-  .replace(/\[([^\]]+(?:\\\][^\]]+)*)\]\((https:\/\/[^\s)]+)\)/g,(_s,label,url)=>'<a target="_blank" rel="noopener noreferrer" href="'+url+'">'+label.replace(/\\\]/g,']')+'</a>')}
+function rich(v){const result=escapeHTML(v).replace(/&lt;br\s*\/?&gt;/gi,'<br>')
+  .replace(/\[([^\]]+(?:\\\][^\]]+)*)\]\((https:\/\/[^\s)]+)\)/g,(_s,label,url)=>'<a target="_blank" rel="noopener noreferrer" href="'+url+'">'+label.replace(/\\\]/g,']')+'</a>');
+  return result.split('<br>').map(line => /[\u3040-\u30ff]/.test(line) ? '<span lang="ja" class="jp-quote">'+line+'</span>' : /[ō]/.test(line) ? '<span lang="en" class="latin-transliteration">'+line+'</span>' : line).join('<br>')
+}
 const content={};
 ORDER.forEach(name=>{const rows=M.strings['string_'+name+'_1.csv'];const groups=[];let current=null;
   rows.forEach(([id,text])=>{if(id.endsWith('_keyword')){current={title:text,body:[]};groups.push(current)}else if(current){current.body.push(text)}});
@@ -74,7 +76,7 @@ function resetReport(page){delete page.dataset.selected;page.querySelector('.rep
 }
 function renderProfile(){const q=profileStrings[2].split(/<br\s*\/?\s*>/i);
  $('hero-first').textContent=profileStrings[0];$('hero-second').textContent=profileStrings[1];
- $('quote-profile').innerHTML='<div>'+rich(q.slice(0,2).join('<br>'))+'</div><div class="credit">'+rich(q.slice(2).join('<br>'))+'</div>';
+ $('quote-profile').innerHTML='<div>'+rich(q[0])+'</div><div>'+rich(q[1]||'')+'</div><div class="credit">'+rich(q.slice(2).join('<br>'))+'</div>';
  const fields=[['이름',profileStrings[3]],['생년월일',profileStrings[4]],['학교',profileStrings[5]+' · '+profileStrings[6]],['학점',profileStrings[7]],['Tel',profileStrings[8].replace(/^Tel\s*:\s*/, '')],['Email',profileStrings[9].replace(/^Email\s*:\s*/, '')]];
  $('identity-cells').innerHTML=fields.map(([k,v])=>'<div class="row"><span class="key">'+escapeHTML(k)+'</span><span class="value">'+rich(v)+'</span></div>').join('');
  $('profile-image-caption').textContent=profileStrings[10]

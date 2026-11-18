@@ -12,14 +12,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Publish v0.4.0 site archive
+      - name: Publish v0.5.0 site archive
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.4.0.zip" "$GITHUB_SHA" -- index.html resource source
-          if ! gh release view v0.4.0 >/dev/null 2>&1; then
-            gh release create v0.4.0 --target "$GITHUB_SHA" --title 'Portfolio Site Draft v0.4.0' --notes 'Camera/world-content separation, hangar-based Y-aligned camera and distance-based zoom, faithful SVG panel contours, squared left-extended helm base, new SVG wheel sprite, original OTF fonts and exact image filenames. Chromium interaction and asset structure tests performed. GitHub Pages live-rendering not yet verified.'
+          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.5.0.zip" "$GITHUB_SHA" -- index.html resource source
+          if ! gh release view v0.5.0 >/dev/null 2>&1; then
+            gh release create v0.5.0 --target "$GITHUB_SHA" --title 'Portfolio Site Draft v0.5.0' --notes 'Restored exact armament typography 16px/400/1.45 while resizing the armament frame; fixed invisible Japanese glyphs using language-specific fallback; restored full report panel diagonal strokes; corrected profile image resource shapes (two portrait + one landscape); verified dual image layout where two source assets exist. Clean Git tree excludes legacy resources.'
           fi
-          gh release upload v0.4.0 "$RUNNER_TEMP/kimeunsuportfolio-v0.4.0.zip" --clobber
+          gh release upload v0.5.0 "$RUNNER_TEMP/kimeunsuportfolio-v0.5.0.zip" --clobber
