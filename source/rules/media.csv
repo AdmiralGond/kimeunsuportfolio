@@ -1,0 +1,38 @@
+﻿image_id,page,keyword,side,path
+1,intro,게임 디자이너로서 나,left,resource/images/intro/Image_A2_01.svg
+2,intro,현재 하고 있는 것,left,resource/images/intro/Image_A2_02.svg
+3,intro,그동안 해온 것,left,resource/images/intro/Image_A2_03.svg
+4,intro,오타쿠로서 나,left,resource/images/intro/Image_A2_04.svg
+5,develop,프로젝트 사진,left,resource/images/develop/Image_B1_01.svg
+6,develop,게임의 가치와 방향,left,resource/images/develop/Image_B1_02.svg
+7,develop,제공하고자 하는 경험,left,resource/images/develop/Image_B1_03.svg
+8,develop,플레이 경험을 반영,left,resource/images/develop/Image_B1_04.svg
+9,play,밀리터리 게임 경험,left,resource/images/play/Image_B2_01.svg
+10,play,서브컬처 게임 경험,left,resource/images/play/Image_B2_02.svg
+11,play,인간 튜토리얼,left,resource/images/play/Image_B2_03.svg
+12,play,나에게 서브컬처란,left,resource/images/play/Image_B2_04.svg
+13,observe,활용 방식 ①,left,resource/images/observe/Image_B3_01.svg
+14,observe,활용 방식 ①,right,resource/images/observe/Image_B3_03.svg
+15,observe,활용 방식 ②,left,resource/images/observe/Image_B3_02.svg
+16,observe,활용 방식 ②,right,resource/images/observe/Image_B3_04.svg
+17,rts,초심자와 숙련자 차이,left,resource/images/rts/Image_C1_01.svg
+18,rts,프로젝트 문제 해결,left,resource/images/rts/Image_C2_02.svg
+19,rts,프로젝트 개요,left,resource/images/rts/Image_C3_03.svg
+20,rts,현재 진행형 개발 중,left,resource/images/rts/Image_C4_04.svg
+21,tamagotchi,터치의 의미와 구상,left,resource/images/tamagotchi/Image_C1_05.svg
+22,tamagotchi,애정도 파라미터 분해,left,resource/images/tamagotchi/Image_C1_06.svg
+23,tamagotchi,목표 플레이 경험,left,resource/images/tamagotchi/Image_C1_07.svg
+24,tamagotchi,다마고치 - 계획 단계,left,resource/images/tamagotchi/Image_C1_08.svg
+25,documents,문서 작성 이력,left,resource/images/documents/Image_C2_01.svg
+26,documents,문서 작성 이력,right,resource/images/documents/Image_C2_05.svg
+27,documents,문서의 접근 관점,left,resource/images/documents/Image_C2_02.svg
+28,documents,문서의 접근 관점,right,resource/images/documents/Image_C2_06.svg
+29,documents,프롤로그,left,resource/images/documents/Image_C2_03.svg
+30,documents,기여하고 싶습니다.,left,resource/images/documents/Image_C2_04.svg
+31,history,길드장과 길드 간부,left,resource/images/history/Image_D1_01.svg
+32,history,전략 게임,left,resource/images/history/Image_D1_02.svg
+33,history,서브컬처 게임,left,resource/images/history/Image_D1_03.svg
+34,history,슈팅 게임,left,resource/images/history/Image_D1_04.svg
+35,profile,,profile,resource/images/profile/Image_A1_01.svg
+36,profile,,profile,resource/images/profile/Image_A1_02.svg
+37,profile,,profile,resource/images/profile/Image_A1_03.svg
