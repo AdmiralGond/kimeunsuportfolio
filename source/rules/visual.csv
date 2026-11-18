@@ -1,0 +1,12 @@
+rule,value
+camera_direction,wheel_down_next
+transition_sequence,zoom_out_then_in
+keyword_exit_pixels,-50
+keyword_enter_pixels,50
+keyword_stage_seconds,0.2
+keyword_easing,easeInOut
+corner_hover_ms,300
+press_scale,0.985
+helm_press_ms,75
+helm_press_y_px,2
+zoom_min_by_distance,true

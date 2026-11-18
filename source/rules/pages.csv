@@ -1,0 +1,10 @@
+page,page_number,order,world_x,world_y
+profile,A1,0,190,140
+intro,A2,1,405,152
+develop,B1,2,620,164
+play,B2,3,835,140
+observe,B3,4,1050,152
+rts,C1,5,1265,164
+tamagotchi,C1,6,1480,140
+documents,C2,7,1695,152
+history,D1,8,1910,164
