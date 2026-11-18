@@ -1,5 +1,5 @@
 rule,value
-ship_scale,5
+ship_scale,9.2
 keyword_exit_pixels,-50
 keyword_enter_pixels,50
 keyword_stage_seconds,0.2
@@ -9,3 +9,8 @@ helm_press_y_px,2
 helm_sprite_columns,16
 helm_sprite_rows,3
 helm_rotation_degrees,334
+helm_frame_width_px,98
+helm_frame_height_px,42
+helm_wheel_diameter_px,44
+helm_button_width_px,48
+helm_button_height_px,15
