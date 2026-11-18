@@ -5,9 +5,18 @@ const ORDER=M.pages, CODES=M.pageCodes, SCALE=M.cameraScale||9.2, VX=952.5, VY=4
 const GUIDE='키워드 버튼 위에 마우스 포인터를 올리거나 버튼을 누르면 해당 키워드의 내용이 여기에 표시됩니다.';
 const NAV=[['프로필',0],['소개',1],['게임을 개발하고,',2],['게임을 플레이하며,',3],['게임을 관찰한다.',4],['1인 게임 개발 프로젝트',5],['기획 문서 작성 이력',7],['게임 플레이 이력',8]];
 const escapeHTML=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function rich(v){const result=escapeHTML(v).replace(/&lt;br\s*\/?&gt;/gi,'<br>')
-  .replace(/\[([^\]]+(?:\\\][^\]]+)*)\]\((https:\/\/[^\s)]+)\)/g,(_s,label,url)=>'<a target="_blank" rel="noopener noreferrer" href="'+url+'">'+label.replace(/\\\]/g,']')+'</a>');
-  return result.split('<br>').map(line => /[\u3040-\u30ff]/.test(line) ? '<span lang="ja" class="jp-quote">'+line+'</span>' : /[ō]/.test(line) ? '<span lang="en" class="latin-transliteration">'+line+'</span>' : line).join('<br>')
+function rich(v){
+ const raw=String(v),pattern=/\[((?:\\.|[^\]\\])*)\]\((https:\/\/[^\s)]+)\)/g;
+ let result='',start=0,match;
+ while((match=pattern.exec(raw))!==null){
+  result+=escapeHTML(raw.slice(start,match.index));
+  const label=escapeHTML(match[1].replace(/\\([\[\]])/g,'$1'));
+  result+='<a target="_blank" rel="noopener noreferrer" href="'+escapeHTML(match[2])+'">'+label+'</a>';
+  start=pattern.lastIndex;
+ }
+ result+=escapeHTML(raw.slice(start));
+ result=result.replace(/&lt;br\s*\/?&gt;/gi,'<br>');
+ return result.split('<br>').map(line=>/[\u3040-\u30ff]/.test(line)?'<span lang="ja" class="jp-quote">'+line+'</span>':/[ō]/.test(line)?'<span lang="en" class="latin-transliteration">'+line+'</span>':line).join('<br>')
 }
 const content={};
 ORDER.forEach(name=>{const rows=M.strings['string_'+name+'_1.csv'];const groups=[];let current=null;
@@ -34,14 +43,19 @@ function installWorldPages(){
 }
 function cornerButton(label){const b=document.createElement('button');b.type='button';b.className='corner-button';
  b.innerHTML=['tl','tr','bl','br'].map(c=>'<span class="corner '+c+'"></span>').join('')+'<span>'+escapeHTML(label)+'</span>';return b}
-function tableHTML(rows){return '<table>'+rows.map((r,i)=>'<tr>'+r.map(v=>'<'+(i?'td':'th')+'>'+rich(v)+'</'+(i?'td':'th')+'>').join('')+'</tr>').join('')+'</table>'}
-function extras(name,title){let s='';for(const t of Object.values(M.tables)){if(t.page===name&&t.keyword===title)s+=tableHTML(t.rows)}
+function tableHTML(table,id){
+ const widths=table.widths||[],total=widths.reduce((a,b)=>a+b,0);
+ const cols=total?'<colgroup>'+widths.map(n=>'<col style="width:'+(n/total*100).toFixed(5)+'%">').join('')+'</colgroup>':'';
+ return '<table data-table="'+escapeHTML(id)+'">'+cols+table.rows.map((r,i)=>'<tr>'+r.map(v=>'<'+(i?'td':'th')+'>'+rich(v)+'</'+(i?'td':'th')+'>').join('')+'</tr>').join('')+'</table>'
+}
+function inlineTable(name,title){for(const [id,t] of Object.entries(M.tables)){if(t.page===name&&t.keyword===title&&Number.isInteger(t.insertAfter))return{after:t.insertAfter,html:tableHTML(t,id)}}return null}
+function extras(name,title){let s='';for(const [id,t] of Object.entries(M.tables)){if(t.page===name&&t.keyword===title&&!Number.isInteger(t.insertAfter))s+=tableHTML(t,id)}
  for(const video of M.videos){if(video.page===name&&video.keyword===title){const url=escapeHTML(video.video_url);s+='<p><a href="'+url+'" target="_blank" rel="noopener noreferrer">'+url+'</a></p>'}}return s}
 function stopTextAnim(page){const a=state.textAnimations.get(page);if(a){try{a.cancel()}catch{}}state.textAnimations.delete(page)}
-function writeText(page,body,animate,append=''){
+function writeText(page,body,animate,append='',insert=null){
  const area=page.querySelector('.report-body');stopTextAnim(page);
  const token=(Number(page.dataset.textToken)||0)+1;page.dataset.textToken=String(token);
- const draw=()=>{area.innerHTML=(body.length?body:[GUIDE]).map(p=>'<p>'+rich(p)+'</p>').join('')+append;area.scrollTop=0};
+ const draw=()=>{const parts=(body.length?body:[GUIDE]).map(p=>'<p>'+rich(p)+'</p>');if(insert)parts.splice(insert.after,0,insert.html);area.innerHTML=parts.join('')+append};
  if(!animate||matchMedia('(prefers-reduced-motion: reduce)').matches){draw();return}
  area.setAttribute('aria-busy','true');
  const out=area.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(-50px)',opacity:0}],{duration:200,easing:'ease-in-out',fill:'forwards'});
@@ -59,7 +73,7 @@ function chooseKeyword(page,index,clicked){const name=page.dataset.page,group=co
  if(page.dataset.selected===String(index)){return}
  page.dataset.selected=String(index);page.querySelector('.report-label').textContent='보고서 - '+group.title;
  page.querySelectorAll('.keyword-row button').forEach((b,j)=>b.classList.toggle('active',j===index));
- showMedia(page,name,group.title);writeText(page,group.body,clicked,extras(name,group.title));
+ showMedia(page,name,group.title);writeText(page,group.body,clicked,extras(name,group.title),inlineTable(name,group.title));
 }
 function initReports(){for(const name of ORDER.slice(1)){
  const page=pageMap.get(name),row=page.querySelector('.keyword-row');
@@ -81,7 +95,7 @@ function renderProfile(){const q=profileStrings[2].split(/<br\s*\/?\s*>/i);
  $('identity-cells').innerHTML=fields.map(([k,v])=>'<div class="row"><span class="key">'+escapeHTML(k)+'</span><span class="value">'+rich(v)+'</span></div>').join('');
  $('profile-image-caption').textContent=profileStrings[10]
 }
-function refreshCommon(index){$('page-num').textContent=CODES[index];$('frame').dataset.page=ORDER[index];
+function refreshCommon(index){$('scroll-guide').hidden=index!==0;$('page-num').textContent=CODES[index];$('frame').dataset.page=ORDER[index];
  document.querySelectorAll('.top-nav button').forEach(b=>b.classList.toggle('active',ORDER[index]===b.dataset.target));
  document.querySelectorAll('#arsenal-items button').forEach(b=>b.classList.toggle('active',Number(b.dataset.page)===index))
 }
@@ -111,22 +125,33 @@ function steer(direction,duration){const el=$('helm-wheel'),pose=state.wheelPose
  }
  state.wheelRAF=requestAnimationFrame(tick)
 }
+function hillProgress(t){return t-Math.sin(4*Math.PI*t)/(4*Math.PI)}
+function zoomProgress(t,min){const u=t<.5?2*t:2*t-1;const half=(1-Math.cos(Math.PI*u))/2;return t<.5?1-(1-min)*half:min+(1-min)*half}
 function navigate(next){if(next<0||next>=ORDER.length)return;
  if(state.busy){state.queued=next;return}
  if(next===state.index)return;
- const from=state.index,min=stopZoom(from,next),duration=940;
+ const from=state.index,min=stopZoom(from,next),duration=1880;
  state.busy=true;state.target=next;
  const targetPage=pageMap.get(ORDER[next]);targetPage.dataset.inTransit='true';if(ORDER[next]!=='profile')resetReport(targetPage);
- const background=world.animate([{transform:focus(from),offset:0},{transform:focusPoint(centerBetween(from,next),min),offset:.5},{transform:focus(next),offset:1}],{duration,easing:'ease-in-out',fill:'forwards'});
+ const start=performance.now(),origin=M.camera[from],destination=M.camera[next];let midpointSwapped=false;
+ // Camera-space UI is anchored to the viewport. Its position follows the camera,
+ // but its own scale is independent of the world zoom (always visually 1).
+ frame.style.transform='translate3d(0,0,0)';
  steer(next>from?1:-1,duration);
- const outward=frame.animate([{transform:'scale(1)'},{transform:'scale('+min+')'}],{duration:duration/2,easing:'ease-in-out',fill:'forwards'});
- outward.onfinish=()=>{outward.cancel();frame.style.transform='scale('+min+')';activatePage(next);
-  const incoming=frame.animate([{transform:'scale('+min+')'},{transform:'scale(1)'}],{duration:duration/2,easing:'ease-in-out',fill:'forwards'});
-  incoming.onfinish=()=>{incoming.cancel();frame.style.transform='scale(1)';background.cancel();world.style.transform=focus(next);
-   state.busy=false;state.target=null;
-   const queued=state.queued;state.queued=null;if(queued!==null&&queued!==state.index)navigate(queued)
-  }
+ function tick(now){
+  const t=Math.min(1,(now-start)/duration),progress=hillProgress(t),zoom=zoomProgress(t,min);
+  const c={x:origin.x+(destination.x-origin.x)*progress,y:origin.y+(destination.y-origin.y)*progress};
+  world.style.transform=focusPoint(c,zoom);
+  frame.style.setProperty('--camera-center-x',c.x);
+  frame.style.setProperty('--camera-center-y',c.y);
+  frame.style.setProperty('--camera-zoom',zoom);
+  if(t>=.5&&!midpointSwapped){midpointSwapped=true;activatePage(next)}
+  if(t<1){state.cameraRAF=requestAnimationFrame(tick);return}
+  world.style.transform=focus(next);frame.style.transform='translate3d(0,0,0)';state.cameraRAF=0;
+  state.busy=false;state.target=null;
+  const queued=state.queued;state.queued=null;if(queued!==null&&queued!==state.index)navigate(queued)
  }
+ state.cameraRAF=requestAnimationFrame(tick)
 }
 function fit(){const scale=Math.min(innerWidth/1905,innerHeight/911);$('stage').style.transform='scale('+scale+')'}
 function initNav(){const list=$('arsenal-items');for(const [label,i] of NAV){const b=document.createElement('button');b.type='button';b.dataset.page=String(i);b.textContent=CODES[i]+' - '+label;b.addEventListener('click',()=>navigate(i));list.appendChild(b)}}

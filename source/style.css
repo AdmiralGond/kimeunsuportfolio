@@ -66,17 +66,17 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 .corner-button:hover .corner{border-color:#71fff8}.corner-button:hover .tl{transform:translate(-6px,-6px)}.corner-button:hover .tr{transform:translate(6px,-6px)}.corner-button:hover .bl{transform:translate(-6px,6px)}.corner-button:hover .br{transform:translate(6px,6px)}
 .report-art{position:absolute;left:252.42px;top:222.54px;width:990.38px;height:451.64px;background:url('../resource/report_panel.svg') 0 0/100% 100% no-repeat}
 .report-label{position:absolute;left:20.4px;top:6px;color:#2ef3e9;font-size:22px;line-height:1.28;font-weight:500}
-.report-copy{position:absolute;top:58px;left:21.5px;right:21.5px;bottom:23px;overflow:hidden}
-.report-body{width:100%;height:100%;overflow:auto;scrollbar-color:#2e7d87 transparent;scrollbar-width:thin;overscroll-behavior:contain;padding-right:8px;color:#f3f0e9;font-size:16px;line-height:1.45}
+.report-copy{position:absolute;top:58px;left:21.5px;right:21.5px;bottom:12px;overflow:visible;z-index:2;pointer-events:none}
+.report-body{width:100%;height:auto;min-height:100%;overflow:visible;scrollbar-width:none;padding-right:0;pointer-events:auto;color:#f3f0e9;font-size:16px;line-height:1.45}
 .report-body p{margin:0 0 14px}
 .report-body table{width:100%;border-collapse:collapse;margin:8px 0 18px;font-size:14px}
 .report-body td,.report-body th{border:1px solid #419baa;vertical-align:top;text-align:left;padding:6px 8px}
 .report-body th{background:#18495b;color:#8af5e6;font-weight:500}
 .report-body a{overflow-wrap:anywhere}
-.report-media{position:absolute;left:21.5px;right:21.5px;bottom:23px;height:181.39px;display:flex;justify-content:space-between;pointer-events:none}
+.report-media{position:absolute;z-index:1;left:21.5px;right:21.5px;bottom:23px;height:181.39px;display:flex;justify-content:space-between;pointer-events:none}
 .media-slot{flex:0 0 450.17px;width:450.17px;height:181.39px;overflow:hidden;pointer-events:auto;border:1px solid #f3f0e9}
 .media-slot img{display:block;width:100%;height:100%;object-fit:fill}
-.report-page.media-active .report-copy{bottom:226px}
+.report-page.media-active .report-copy{bottom:12px}
 /* Approved 952x456 guidance scaled into the native 1905x911 stage: wheel 44->88, panel 86->172, button 48x15->96x30. */
 #helm-control{position:absolute;right:20px;bottom:0;z-index:50;width:198px;height:88px;pointer-events:none;overflow:visible}
 .helm-frame{position:absolute;left:2px;bottom:0;width:196px;height:84px;display:block;pointer-events:none;z-index:0}
@@ -89,3 +89,13 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 .jp-quote{font:400 16px/1.45 "Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans CJK JP","Meiryo",sans-serif;letter-spacing:0}
 
 .latin-transliteration{font:400 16px/1.45 "Arial","Noto Sans",sans-serif;letter-spacing:0}
+
+/* Notion source table: preserve the five original column proportions and explicit <br> nodes. */
+.report-body table[data-table="play_subculture"]{table-layout:fixed;width:100%;font-size:16px;line-height:1.45}
+.report-body table[data-table="play_subculture"] td,.report-body table[data-table="play_subculture"] th{word-break:keep-all;overflow-wrap:normal;hyphens:none;white-space:normal}
+/* Profile-only separate screen-space hint. Vertical writing, never rotated text. */
+#scroll-guide{position:absolute;left:155px;top:505px;width:35px;height:262px;display:flex;justify-content:space-between;align-items:flex-start;z-index:20;pointer-events:none;color:#87bbb9}
+#scroll-guide[hidden]{display:none!important}
+.scroll-guide-text{writing-mode:vertical-rl;text-orientation:upright;white-space:nowrap;font-family:Nexon,sans-serif;font-size:8px;font-weight:700;line-height:1.2;letter-spacing:.1px}
+.scroll-guide-arrow{position:relative;display:block;margin-top:6px;width:1px;height:225px;background:currentColor;opacity:.85}
+.scroll-guide-arrow:after{content:'';position:absolute;left:-3.5px;bottom:0;width:7px;height:7px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg)}
