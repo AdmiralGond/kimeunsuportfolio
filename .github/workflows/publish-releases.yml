@@ -12,25 +12,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Publish v0.1.0 historical source
+      - name: Publish v0.3.0 site archive
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.1.0.zip" 3b9ea99db0b2a988c1a6a018139e441fc92e1e35 -- index.html resource source
-          if ! gh release view v0.1.0 >/dev/null 2>&1; then
-            gh release create v0.1.0 --target 3b9ea99db0b2a988c1a6a018139e441fc92e1e35 --title 'Portfolio Site Draft v0.1.0' --notes 'Initial development draft. Historical release; superseded by v0.2.0.'
+          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.3.0.zip" "$GITHUB_SHA" -- index.html resource source
+          if ! gh release view v0.3.0 >/dev/null 2>&1; then
+            gh release create v0.3.0 --target "$GITHUB_SHA" --title 'Portfolio Site Draft v0.3.0' --notes 'Rebuilt camera positions from ship coordinates, restored common SVG frame and profile layout, redrew helm wheel and base, corrected keyword/media mapping, preserved image placeholders and bundled original font assets. Browser interaction tested via Chromium using inline source; full GitHub Pages hosting smoke test remains pending.'
           fi
-          gh release upload v0.1.0 "$RUNNER_TEMP/kimeunsuportfolio-v0.1.0.zip" --clobber
-      - name: Publish v0.2.0 site archive
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.2.0.zip" "$GITHUB_SHA" -- index.html resource source
-          if ! gh release view v0.2.0 >/dev/null 2>&1; then
-            gh release create v0.2.0 --target "$GITHUB_SHA" --title 'Portfolio Site Draft v0.2.0' --notes 'Reworked reference frame, local NEXON font assets, original-named SVG image placeholders, keyword image mapping and updated helm rotation. Notion media remains placeholders. Live browser validation pending.'
-          fi
-          gh release upload v0.2.0 "$RUNNER_TEMP/kimeunsuportfolio-v0.2.0.zip" --clobber
+          gh release upload v0.3.0 "$RUNNER_TEMP/kimeunsuportfolio-v0.3.0.zip" --clobber

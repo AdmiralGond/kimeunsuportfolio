@@ -1,4 +1,5 @@
 rule,value
+ship_scale,5
 keyword_exit_pixels,-50
 keyword_enter_pixels,50
 keyword_stage_seconds,0.2
@@ -7,3 +8,4 @@ press_scale,0.985
 helm_press_y_px,2
 helm_sprite_columns,16
 helm_sprite_rows,3
+helm_rotation_degrees,334
