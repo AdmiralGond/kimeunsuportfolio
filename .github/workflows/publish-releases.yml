@@ -12,21 +12,29 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Publish v0.9.2
+      - name: Update v0.9.2
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
+          if [ "$(git log -1 --format=%s "$GITHUB_SHA")" != "Correct D1 title in v0.9.2 CSV and navigation" ]; then
+            exit 0
+          fi
           git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.9.2.zip" "$GITHUB_SHA" -- README.md index.html resource source
           cat > "$RUNNER_TEMP/v0.9.2-notes.md" <<'EOF'
           - CSV를 기준으로 index.html의 실행 데이터를 갱신하는 빌드 명령과 README 추가
           - CSV 데이터와 프로필 이미지 경로의 동기화 기능 추가
           - 표·영상 삽입 로직 통합 및 중복 CSS 정리
+          - D1 페이지 제목을 'AI 워크플로우, 플레이 이력'으로 변경
           EOF
-          if ! gh release view v0.9.2 >/dev/null 2>&1; then
-            gh release create v0.9.2 --target "$GITHUB_SHA" --title 'Portfolio Site v0.9.2' --notes-file "$RUNNER_TEMP/v0.9.2-notes.md"
-          else
-            gh release edit v0.9.2 --notes-file "$RUNNER_TEMP/v0.9.2-notes.md"
+          current_tag="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v0.9.2" --jq '.object.sha')"
+          if [ "$current_tag" != "$GITHUB_SHA" ]; then
+            if [ "$current_tag" != 'ea97311f88fe19ed74b519b28576982a5f0d88e8' ]; then
+              echo "v0.9.2 tag changed unexpectedly; refusing to replace it"
+              exit 1
+            fi
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/v0.9.2" -f sha="$GITHUB_SHA" -F force=true > /dev/null
           fi
+          gh release edit v0.9.2 --target "$GITHUB_SHA" --title 'Portfolio Site v0.9.2' --notes-file "$RUNNER_TEMP/v0.9.2-notes.md"
           gh release upload v0.9.2 "$RUNNER_TEMP/kimeunsuportfolio-v0.9.2.zip" --clobber
