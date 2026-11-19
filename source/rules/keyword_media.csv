@@ -13,10 +13,6 @@ play,인간 튜토리얼,resource/images/play/Image_B2_03.png,
 play,나에게 서브컬처란,resource/images/play/Image_B2_04.png,
 observe,활용 방식 ①,resource/images/observe/Image_B3_01.png,resource/images/observe/Image_B3_03.png
 observe,활용 방식 ②,resource/images/observe/Image_B3_02.png,resource/images/observe/Image_B3_04.png
-rts,초심자와 숙련자 차이,resource/images/rts/Image_C1_01.png,
-rts,프로젝트 문제 해결,resource/images/rts/Image_C2_02.png,
-rts,프로젝트 개요,resource/images/rts/Image_C3_03.png,
-rts,현재 진행형 개발 중,resource/images/rts/Image_C4_04.png,
 tamagotchi,터치의 의미와 구상,resource/images/tamagotchi/Image_C1_05.png,
 tamagotchi,애정도 파라미터 분해,resource/images/tamagotchi/Image_C1_06.png,
 tamagotchi,목표 플레이 경험,resource/images/tamagotchi/Image_C1_07.png,
@@ -25,10 +21,12 @@ documents,문서 작성 이력,resource/images/documents/Image_C2_01.png,resourc
 documents,문서의 접근 관점,resource/images/documents/Image_C2_02.png,resource/images/documents/Image_C2_06.png
 documents,프롤로그,resource/images/documents/Image_C2_03.png,
 documents,기여하고 싶습니다.,resource/images/documents/Image_C2_04.png,
-history,길드장과 길드 간부,resource/images/history/Image_D1_01.png,
-history,전략 게임,resource/images/history/Image_D1_02.png,
-history,서브컬처 게임,resource/images/history/Image_D1_03.png,
-history,슈팅 게임,resource/images/history/Image_D1_04.png,
 profile,,resource/images/profile/Image_A1_01.png,
 profile,,resource/images/profile/Image_A1_02.png,
 profile,,resource/images/profile/Image_A1_03.png,
+rts,프로젝트 개요,resource/images/rts/Image_C4_04.png,
+rts,프로젝트 문서,resource/images/rts/Image_C3_03.png,
+rts,프로젝트 문제 해결,resource/images/rts/Image_C2_02.png,
+rts,초심자와 숙련자 차이,resource/images/rts/Image_C1_01.png,
+history,AI 워크 플로우,resource/images/history/Image_D1_01.png,resource/images/history/Image_D1_03.png
+history,플레이 이력,resource/images/history/Image_D1_02.png,resource/images/history/Image_D1_04.png

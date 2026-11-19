@@ -3,7 +3,7 @@ const M=JSON.parse(document.getElementById('portfolio-data').textContent);
 const $=id=>document.getElementById(id);
 const ORDER=M.pages, CODES=M.pageCodes, SCALE=M.cameraScale||9.2, VX=952.5, VY=455.5;
 const GUIDE='키워드 버튼 위에 마우스 포인터를 올리거나 버튼을 누르면 해당 키워드의 내용이 여기에 표시됩니다.';
-const NAV=[['프로필',0],['소개',1],['게임을 개발하고,',2],['게임을 플레이하며,',3],['게임을 관찰한다.',4],['1인 게임 개발 프로젝트',5],['기획 문서 작성 이력',7],['게임 플레이 이력',8]];
+const NAV=[['프로필',0],['소개',1],['게임을 개발하고,',2],['게임을 플레이하며,',3],['게임을 관찰한다.',4],['1인 게임 개발 프로젝트',5],['기획 문서 작성 이력',7],['AI 워크 플로우 및 플레이 이력',8]];
 const escapeHTML=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function rich(v){
  const raw=String(v),pattern=/\[((?:\\.|[^\]\\])*)\]\((https:\/\/[^\s)]+)\)/g;

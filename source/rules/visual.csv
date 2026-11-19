@@ -1,5 +1,5 @@
 rule,value
-ship_scale,9.2
+ship_scale,11.90625
 keyword_exit_pixels,-50
 keyword_enter_pixels,50
 keyword_stage_seconds,0.2
