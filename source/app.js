@@ -88,6 +88,34 @@ function resetReport(page){delete page.dataset.selected;page.querySelector('.rep
  page.querySelector('.report-media').replaceChildren();page.classList.remove('media-active');
  writeText(page,[GUIDE],false)
 }
+function renderProfileTools(){
+ const root=$('profile-tool-bars');root.replaceChildren();
+ const byId=new Map(M.strings['string_profile_1.csv']);
+ for(const tool of M.profileTools){
+  const row=document.createElement('div');row.className='profile-skill';
+  row.dataset.panel=String(tool.panel);row.dataset.slot=String(tool.order);
+  const icon=document.createElement('img');icon.className='profile-skill-icon';
+  icon.src=tool.icon;icon.alt='';icon.setAttribute('aria-hidden','true');
+  const meter=document.createElement('div');meter.className='profile-skill-meter';
+  meter.tabIndex=0;meter.setAttribute('role','meter');
+  meter.setAttribute('aria-label',tool.tool);meter.setAttribute('aria-valuemin','0');
+  meter.setAttribute('aria-valuemax',String(tool.maximum));
+  meter.setAttribute('aria-valuenow',String(tool.score));
+  const fill=document.createElement('span');fill.className='profile-skill-fill';
+  fill.style.width=(100*tool.score/tool.maximum)+'%';
+  const numbers=document.createElement('span');numbers.className='profile-skill-value';
+  numbers.textContent=tool.score+' / '+tool.maximum;
+  const tip=document.createElement('span');tip.className='profile-skill-tooltip';
+  const tipText=byId.get(String(tool.tooltip_id));
+  if(!tipText)throw Error('Missing profile tool tooltip ID '+tool.tooltip_id);
+  if(tool.url){
+   const link=document.createElement('a');link.textContent=tipText;link.href=tool.url;
+   link.target='_blank';link.rel='noopener noreferrer';tip.appendChild(link);
+  }else{tip.textContent=tipText}
+  tip.setAttribute('role','tooltip');
+  meter.append(fill,numbers,tip);row.append(icon,meter);root.appendChild(row);
+ }
+}
 function renderProfile(){const q=profileStrings[2].split(/<br\s*\/?\s*>/i);
  $('hero-first').textContent=profileStrings[0];$('hero-second').textContent=profileStrings[1];
  $('quote-profile').innerHTML='<div>'+rich(q[0])+'</div><div>'+rich(q[1]||'')+'</div><div class="credit">'+rich(q.slice(2).join('<br>'))+'</div>';
@@ -170,5 +198,5 @@ window.addEventListener('resize',fit);
 $('brand').addEventListener('click',()=>navigate(0));
 document.querySelectorAll('.top-nav button').forEach(b=>b.addEventListener('click',()=>navigate(ORDER.indexOf(b.dataset.target))));
 $('starboard').addEventListener('click',()=>window.open('https://youtu.be/mS9qQByGAWE?si=cqDjgb7t6tDbiFTW','_blank','noopener,noreferrer'));
-installWorldPages();initReports();renderProfile();initNav();fit();world.style.transform=focus(0);activatePage(0);
+installWorldPages();initReports();renderProfile();renderProfileTools();initNav();fit();world.style.transform=focus(0);activatePage(0);
 })();

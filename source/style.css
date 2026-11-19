@@ -102,3 +102,24 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 
 /* Original image guide widths and positions remain fixed; source images resize solely by height. */
 #profile-photos{overflow:visible}#profile-photos .profile-slot{height:129.42px;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid #f3f0e9}
+
+
+/* A1 tools: two horizontal scores per existing panel. Background geometry is unchanged. */
+#profile-tool-bars{position:absolute;inset:0;pointer-events:none}
+.profile-skill{position:absolute;width:274px;height:40px;display:flex;align-items:center;gap:12px;pointer-events:none;z-index:1}
+.profile-skill[data-panel="1"]{left:40px}.profile-skill[data-panel="2"]{left:380px}
+.profile-skill[data-panel="3"]{left:721px}.profile-skill[data-panel="4"]{left:1061px}
+.profile-skill[data-slot="1"]{top:73px}.profile-skill[data-slot="2"]{top:151px}
+.profile-skill-icon{display:block;flex:0 0 40px;width:40px;height:40px;object-fit:contain;pointer-events:none}
+.profile-skill-meter{position:relative;flex:1 1 auto;width:0;height:30px;border:1px solid #3b9aaa;background:#123847;outline-offset:2px;cursor:default;pointer-events:auto}
+.profile-skill-fill{display:block;position:absolute;inset:0 auto 0 0;border-radius:0 7px 7px 0;background:linear-gradient(90deg,#248a99,#49c6c5);transform-origin:0 50%;animation:profile-skill-grow 600ms cubic-bezier(.22,1,.36,1) both}
+.profile-skill[data-slot="2"] .profile-skill-fill{animation-delay:90ms}
+.profile-skill-value{position:absolute;inset:0 9px 0 0;display:flex;align-items:center;justify-content:flex-end;color:#f3f0e9;font:400 16px/1.45 Nexon,sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.profile-skill-tooltip{position:absolute;z-index:50;bottom:calc(100% + 7px);left:0;width:max-content;max-width:316px;padding:9px 12px;border-radius:8px;background:#26282c;color:#fff;font:300 14px/1.45 Nexon,sans-serif;box-shadow:0 6px 16px rgba(0,0,0,.3);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(6px);transition:opacity 200ms ease,transform 200ms cubic-bezier(.22,1,.36,1),visibility 200ms}
+.profile-skill-tooltip:after{content:'';position:absolute;top:100%;left:18px;border:8px solid transparent;border-top-color:#26282c;border-bottom:0}
+.profile-skill-meter:is(:hover,:focus-within) .profile-skill-tooltip{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
+.profile-skill-tooltip a{color:#fff;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere;pointer-events:auto}
+.profile-skill-tooltip a:hover{color:#9ee8e5}
+.profile-skill-meter:focus-visible{outline:2px solid #a2f5ec}
+@keyframes profile-skill-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.profile-skill-fill{animation:none}.profile-skill-tooltip{transition:none}}
