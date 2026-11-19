@@ -34,13 +34,12 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 #arsenal-items button.active{color:#f1ffff}
 #arsenal-items button.active:before{content:'▶';display:inline-block;font-size:12px;margin-left:-12px;margin-right:3px}
 #footer-caption{position:absolute;left:93px;top:789px;color:#3bb5aa;font-size:14px;font-weight:300}
-/* Profile coordinates are exact original 1920x1080 SVG coordinates with 121px browser chrome excluded. */
 #hero{position:absolute;left:242px;top:160px;white-space:nowrap}
 #hero-first{font-size:36px;line-height:1.2;font-weight:700;letter-spacing:-.5px;color:#1c696b}
 #hero-second{font-size:48px;line-height:1.15;font-weight:700;letter-spacing:-.8px;color:#e63992}
 #quote-profile{position:absolute;left:249.62px;top:275px;width:1035px;font-size:16px;line-height:1.45;color:#f1f8f9}
 #quote-profile .credit{font-size:14px;font-weight:300;color:#e2edf0}
-#profile-photos{position:absolute;left:250.12px;top:354.29px;display:grid;grid-template-columns:104.09px 104.09px 210.11px;gap:28.08px;height:129.42px}
+#profile-photos{position:absolute;left:250.12px;top:354.29px;display:grid;grid-template-columns:104.09px 104.09px 210.11px;gap:28.08px;height:129.42px;overflow:visible}
 #profile-photos img{display:block;width:auto;max-width:none;height:129.42px;object-fit:unset;flex-shrink:0;border:0}
 #profile-image-caption{position:absolute;left:513.99px;top:487.5px;width:210px;height:18px;white-space:nowrap;color:#f1f8f9;font-size:12px;line-height:1.45;overflow:visible}
 #identity{position:absolute;left:930.4px;top:275px;width:360px;color:#1c696b}
@@ -53,7 +52,6 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 #profile-tools>img{position:absolute;left:0;top:0;width:1400px;height:228px;display:block}
 .tool-title{position:absolute;top:11px;display:block;width:315px;transform:translateX(-50%);text-align:center;white-space:nowrap;color:#2ef3e9;font-size:22px;font-weight:500;line-height:1.28}
 .tool-title:nth-of-type(1){left:177px}.tool-title:nth-of-type(2){left:517px}.tool-title:nth-of-type(3){left:858px}.tool-title:nth-of-type(4){left:1198px}
-/* Each report page has its own world position; no content belongs to the moving shared frame. */
 .keyword-row{position:absolute;left:273.43px;top:144.41px;width:946.44px;height:55.81px;pointer-events:auto}
 .keyword-row button{position:absolute;top:0;width:201.73px;height:55.81px;border:2px solid #339ea6;background:#173e8b;color:#2ef3e9;font-size:16px;line-height:1.3;font-weight:500;padding:0 8px;text-decoration:underline;text-underline-offset:3px}
 .keyword-row button:nth-child(1){left:0}.keyword-row button:nth-child(2){left:248.23px}.keyword-row button:nth-child(3){left:496.47px}.keyword-row button:nth-child(4){left:744.71px}
@@ -76,8 +74,6 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 .report-media{position:absolute;z-index:1;left:21.5px;right:21.5px;bottom:23px;height:181.39px;display:flex;justify-content:space-between;pointer-events:none}
 .media-slot{display:flex;align-items:center;justify-content:center;flex:0 0 450.17px;width:450.17px;height:181.39px;overflow:hidden;pointer-events:auto;border:1px solid #f3f0e9}
 .media-slot img{display:block;height:100%;width:auto;max-width:none;max-height:none;flex-shrink:0;object-fit:unset}
-.report-page.media-active .report-copy{bottom:12px}
-/* Approved 952x456 guidance scaled into the native 1905x911 stage: wheel 44->88, panel 86->172, button 48x15->96x30. */
 #helm-control{position:absolute;right:20px;bottom:0;z-index:50;width:198px;height:88px;pointer-events:none;overflow:visible}
 .helm-frame{position:absolute;left:2px;bottom:0;width:196px;height:84px;display:block;pointer-events:none;z-index:0}
 #helm-wheel{position:absolute;left:0;bottom:-10px;width:88px;height:88px;z-index:2;background:url('../resource/helm_sprite.svg') 0 0/1408px 264px no-repeat;transform-origin:44px 44px;will-change:background-position,transform}
@@ -90,21 +86,15 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 
 .latin-transliteration{font:400 16px/1.45 "Arial","Noto Sans",sans-serif;letter-spacing:0}
 
-/* Notion source table: preserve the five original column proportions and explicit <br> nodes. */
 .report-body table[data-table="play_subculture"]{table-layout:fixed;width:100%;font-size:16px;line-height:1.45}
 .report-body table[data-table="play_subculture"] td,.report-body table[data-table="play_subculture"] th{word-break:keep-all;overflow-wrap:normal;hyphens:none;white-space:normal}
-/* Profile-only separate screen-space hint. Vertical writing, never rotated text. */
 #scroll-guide{position:absolute;right:180px;top:505px;width:35px;height:262px;display:flex;justify-content:space-between;align-items:flex-start;z-index:20;pointer-events:none;color:#87bbb9}
 #scroll-guide[hidden]{display:none!important}
 .scroll-guide-text{writing-mode:vertical-rl;text-orientation:upright;white-space:nowrap;font-family:Nexon,sans-serif;font-size:8px;font-weight:700;line-height:1.2;letter-spacing:.1px}
 .scroll-guide-arrow{position:relative;display:block;margin-top:6px;width:1px;height:225px;background:currentColor;opacity:.85}
 .scroll-guide-arrow:after{content:'';position:absolute;left:-3.5px;bottom:0;width:7px;height:7px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg)}
 
-/* Original image guide widths and positions remain fixed; source images resize solely by height. */
-#profile-photos{overflow:visible}#profile-photos .profile-slot{height:129.42px;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid #f3f0e9}
-
-
-/* A1 tools: two horizontal scores per existing panel. Background geometry is unchanged. */
+#profile-photos .profile-slot{height:129.42px;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid #f3f0e9}
 #profile-tool-bars{position:absolute;inset:0;pointer-events:none}
 .profile-skill{position:absolute;width:274px;height:40px;display:flex;align-items:center;gap:12px;pointer-events:none;z-index:1}
 .profile-skill[data-panel="1"]{left:40px}.profile-skill[data-panel="2"]{left:380px}
@@ -115,7 +105,8 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 .profile-skill-fill{display:block;position:absolute;inset:0 auto 0 0;border-radius:0 7px 7px 0;background:linear-gradient(90deg,#248a99,#49c6c5);transform-origin:0 50%;animation:profile-skill-grow 600ms cubic-bezier(.22,1,.36,1) both}
 .profile-skill[data-slot="2"] .profile-skill-fill{animation-delay:90ms}
 .profile-skill-value{position:absolute;inset:0 9px 0 0;display:flex;align-items:center;justify-content:flex-end;color:#f3f0e9;font:400 16px/1.45 Nexon,sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,.5)}
-.profile-skill-tooltip{position:absolute;z-index:50;bottom:calc(100% + 7px);left:0;width:max-content;max-width:316px;padding:9px 12px;border-radius:8px;background:#26282c;color:#fff;font:300 14px/1.45 Nexon,sans-serif;box-shadow:0 6px 16px rgba(0,0,0,.3);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(6px);transition:opacity 200ms ease,transform 200ms cubic-bezier(.22,1,.36,1),visibility 200ms}
+.profile-skill-tooltip{--tooltip-gap:7px;position:absolute;z-index:50;bottom:calc(100% + var(--tooltip-gap));left:0;width:max-content;max-width:316px;padding:9px 12px;border-radius:8px;background:#26282c;color:#fff;font:300 14px/1.45 Nexon,sans-serif;box-shadow:0 6px 16px rgba(0,0,0,.3);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(6px);transition:opacity 200ms ease,transform 200ms cubic-bezier(.22,1,.36,1),visibility 200ms}
+.profile-skill-tooltip:before{content:"";position:absolute;left:0;right:0;top:100%;height:calc(var(--tooltip-gap) + 1px)}
 .profile-skill-tooltip:after{content:'';position:absolute;top:100%;left:18px;border:8px solid transparent;border-top-color:#26282c;border-bottom:0}
 .profile-skill-meter:is(:hover,:focus-within) .profile-skill-tooltip{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
 .profile-skill-tooltip a{color:#fff;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere;pointer-events:auto}

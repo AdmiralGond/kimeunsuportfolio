@@ -12,21 +12,21 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Publish v0.9.0
+      - name: Publish v0.9.2
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.9.0.zip" "$GITHUB_SHA" -- index.html resource source
-          cat > "$RUNNER_TEMP/v0.9.0-notes.md" <<'EOF'
-          - A1 도구 영역 4개에 아이콘과 가로 숙련도 막대 그래프 8개 추가
-          - 파워포인트·엑셀·워드·노션·포토샵·일러스트레이터·마야·맥스의 10점 만점 점수 표시
-          - 그래프 호버 시 도구별 설명 툴팁 표시 및 마야·맥스 외부 작업물 연결
+          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.9.2.zip" "$GITHUB_SHA" -- README.md index.html resource source
+          cat > "$RUNNER_TEMP/v0.9.2-notes.md" <<'EOF'
+          - CSV를 기준으로 index.html의 실행 데이터를 갱신하는 빌드 명령과 README 추가
+          - CSV 데이터와 프로필 이미지 경로의 동기화 기능 추가
+          - 표·영상 삽입 로직 통합 및 중복 CSS 정리
           EOF
-          if ! gh release view v0.9.0 >/dev/null 2>&1; then
-            gh release create v0.9.0 --target "$GITHUB_SHA" --title 'Portfolio Site v0.9.0' --notes-file "$RUNNER_TEMP/v0.9.0-notes.md"
+          if ! gh release view v0.9.2 >/dev/null 2>&1; then
+            gh release create v0.9.2 --target "$GITHUB_SHA" --title 'Portfolio Site v0.9.2' --notes-file "$RUNNER_TEMP/v0.9.2-notes.md"
           else
-            gh release edit v0.9.0 --notes-file "$RUNNER_TEMP/v0.9.0-notes.md"
+            gh release edit v0.9.2 --notes-file "$RUNNER_TEMP/v0.9.2-notes.md"
           fi
-          gh release upload v0.9.0 "$RUNNER_TEMP/kimeunsuportfolio-v0.9.0.zip" --clobber
+          gh release upload v0.9.2 "$RUNNER_TEMP/kimeunsuportfolio-v0.9.2.zip" --clobber
