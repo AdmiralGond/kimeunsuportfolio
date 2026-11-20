@@ -3,8 +3,9 @@
     const M = JSON.parse(document.getElementById('portfolio-data').textContent);
     const $ = id => document.getElementById(id);
     const ORDER = M.pages, CODES = M.pageCodes, SCALE = M.cameraScale || 9.2, VX = 952.5, VY = 455.5;
+    const pageStrings = Object.fromEntries(ORDER.map((name, i) => [name, M.strings[M.stringFiles[i]]]));
     const GUIDE = '키워드 버튼 위에 마우스 포인터를 올리거나 버튼을 누르면 해당 키워드의 내용이 여기에 표시됩니다.';
-    const NAV = [['프로필', 0], ['소개', 1], ['게임을 개발하고,', 2], ['게임을 플레이하며,', 3], ['게임을 관찰한다.', 4], ['1인 게임 개발 프로젝트', 5], ['기획 문서 작성 이력', 7], [M.strings['string_history_1.csv'][0][1], 8]];
+    const NAV = [['프로필', 0], ['소개', 1], ['게임을 개발하고,', 2], ['게임을 플레이하며,', 3], ['게임을 관찰한다.', 4], ['1인 게임 개발 프로젝트', 5], ['기획 문서 작성 이력', 7], [pageStrings.history[0][1], 8]];
     const escapeHTML = v => String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     function rich(v) {
         const raw = String(v), pattern = /\[((?:\\.|[^\]\\])*)\]\((https:\/\/[^\s)]+)\)/g;
@@ -21,7 +22,7 @@
     }
     const content = {};
     ORDER.forEach(name => {
-        const rows = M.strings['string_' + name + '_1.csv'];
+        const rows = pageStrings[name];
         const groups = [];
         let current = null;
         rows.forEach(([id, text]) => {
@@ -355,7 +356,7 @@
     function renderProfileTools() {
         const root = $('profile-tool-bars');
         root.replaceChildren();
-        const byId = new Map(M.strings['string_profile_1.csv']);
+        const byId = new Map(pageStrings.profile);
         for (const tool of M.profileTools) {
             const row = document.createElement('div');
             row.className = 'profile-skill';

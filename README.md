@@ -4,7 +4,7 @@
 
 ## 콘텐츠와 규칙 수정
 
-- 문자열: `source/strings/string_{page}_1.csv`
+- 문자열: `source/strings/string_{page}_{order}.csv` (`pages.csv`의 0부터 시작하는 `order`에 1을 더한 페이지 순번)
 - 화면 좌표·이미지 연결·표·영상·도구 점수 및 툴팁: `source/rules/*.csv`
 - 화면 표현: `source/style.css`, 상호작용: `source/app.js`
 - 이미지·SVG·OTF: `resource/`

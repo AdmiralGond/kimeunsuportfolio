@@ -30,6 +30,13 @@ def manifest():
     pages = sorted(records(RULES / 'pages.csv'), key=lambda page: int(page['order']))
     visual = {row['rule']: row['value'] for row in records(RULES / 'visual.csv')}
     names = [page['page'] for page in pages]
+    if [int(page['order']) for page in pages] != list(range(len(pages))):
+        raise ValueError('pages.csv의 order는 0부터 연속된 페이지 순서여야 합니다.')
+    string_files = [f'string_{name}_{index}.csv' for index, name in enumerate(names, 1)]
+    source_files = {path.name for path in STRINGS.glob('string_*.csv')}
+    if source_files != set(string_files):
+        raise ValueError(f'문자열 CSV 파일명이 페이지 순서와 다릅니다. 누락: {sorted(set(string_files) - source_files)}, 불일치: {sorted(source_files - set(string_files))}')
+    page_strings = {name: strings(STRINGS / name) for name in string_files}
     media = [
         {
             'page': row['page'],
@@ -61,7 +68,7 @@ def manifest():
             'tooltip_id': row['tooltip_id'],
             'url': row['url'],
         })
-    tooltips = dict(strings(STRINGS / 'string_profile_1.csv'))
+    tooltips = dict(page_strings[string_files[names.index('profile')]])
     for tool in tools:
         if tool['tooltip_id'] not in tooltips:
             raise ValueError(f"{tool['tool']}: 설명 문자열 ID {tool['tooltip_id']}가 없습니다.")
@@ -73,7 +80,8 @@ def manifest():
             for page in pages
         ],
         'cameraScale': float(visual['ship_scale']),
-        'strings': {path.name: strings(path) for path in sorted(STRINGS.glob('string_*.csv'))},
+        'stringFiles': string_files,
+        'strings': page_strings,
         'media': media,
         'tables': tables,
         'videos': records(RULES / 'videos.csv'),
