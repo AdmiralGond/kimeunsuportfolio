@@ -439,7 +439,8 @@
     function centerBetween(i, j) { return { x: (M.camera[i].x + M.camera[j].x) / 2, y: (M.camera[i].y + M.camera[j].y) / 2 }; }
     function stopZoom(i, j) {
         const dist = Math.hypot(M.camera[i].x - M.camera[j].x, M.camera[i].y - M.camera[j].y) * SCALE;
-        return Math.max(.18, Math.min(.84, 1400 / (1400 + dist)));
+        const currentMinimumZoom = Math.max(.18, Math.min(.84, 1400 / (1400 + dist)));
+        return 1 - (1 - currentMinimumZoom) / 5;
     }
     function steer(direction, duration) {
         const el = $('helm-wheel'), pose = state.wheelPose;

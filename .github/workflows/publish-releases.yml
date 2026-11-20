@@ -12,22 +12,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Publish v0.10.1
+      - name: Publish v0.10.2
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.1.zip" "$GITHUB_SHA" -- README.md index.html resource source
-          cat > "$RUNNER_TEMP/v0.10.1-notes.md" <<'EOF'
-          - A1 사진 캡션을 두 번째 사진 아래 왼쪽 정렬로 변경
-          - A1 사진·스크롤·도구 안내문의 글꼴과 원본 흰색 계열 색상 통일
-          - A1 도구 패널 아래 마우스 호버 설명 안내문 추가
+          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.2.zip" "$GITHUB_SHA" -- README.md index.html resource source
+          cat > "$RUNNER_TEMP/v0.10.2-notes.md" <<'EOF'
+          - 카메라 전환 중 축소량을 기존의 1/5로 조정
+          - 배경 보조 그리드 간격을 6px, 주요 그리드 간격을 30px로 조정
+          - B2 서브컬처 게임 경험 표를 본문 위로 배치
           EOF
-          if ! gh release view v0.10.1 >/dev/null 2>&1; then
-            gh release create v0.10.1 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.1' --notes-file "$RUNNER_TEMP/v0.10.1-notes.md"
+          if ! gh release view v0.10.2 >/dev/null 2>&1; then
+            gh release create v0.10.2 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.2' --notes-file "$RUNNER_TEMP/v0.10.2-notes.md"
           else
-            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.10.1" -f sha="$GITHUB_SHA" -F force=true >/dev/null
-            gh release edit v0.10.1 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.1-notes.md"
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.10.2" -f sha="$GITHUB_SHA" -F force=true >/dev/null
+            gh release edit v0.10.2 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.2-notes.md"
           fi
-          gh release upload v0.10.1 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.1.zip" --clobber
+          gh release upload v0.10.2 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.2.zip" --clobber
