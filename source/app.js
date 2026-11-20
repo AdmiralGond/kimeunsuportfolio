@@ -151,7 +151,170 @@
         slots.replaceChildren();
         const imgs = media.get(name + '|' + title) || [];
         page.classList.toggle('media-active', imgs.length > 0);
-        imgs.slice(0, 2).forEach(path => { const box = document.createElement('div'), img = document.createElement('img'); box.className = 'media-slot'; img.src = path; img.alt = ''; img.loading = 'lazy'; box.appendChild(img); slots.appendChild(box); });
+        imgs.slice(0, 2).forEach(path => { const box = document.createElement('div'), img = document.createElement('img'); box.className = 'media-slot'; img.src = path; img.alt = ''; img.loading = 'lazy'; makeImageZoomable(img); box.appendChild(img); slots.appendChild(box); });
+    }
+    function makeImageZoomable(image) {
+        image.tabIndex = 0;
+        image.setAttribute('role', 'button');
+        image.setAttribute('aria-label', '이미지 확대');
+    }
+    function setupImageViewer() {
+        const root = document.createElement('div');
+        root.id = 'image-viewer';
+        root.hidden = true;
+        root.setAttribute('role', 'dialog');
+        root.setAttribute('aria-modal', 'true');
+        root.setAttribute('aria-label', '이미지 확대');
+        root.innerHTML = '<div class="image-viewer-backdrop"></div><div class="image-viewer-photo"><img alt=""></div><button type="button" class="image-viewer-close image-viewer-control" aria-label="닫기">×</button><button type="button" class="image-viewer-prev image-viewer-arrow image-viewer-control" aria-label="이전 이미지">‹</button><button type="button" class="image-viewer-next image-viewer-arrow image-viewer-control" aria-label="다음 이미지">›</button><div class="image-viewer-count image-viewer-control" aria-live="polite"></div>';
+        document.body.appendChild(root);
+        const backdrop = root.querySelector('.image-viewer-backdrop');
+        const frame = root.querySelector('.image-viewer-photo');
+        const picture = frame.querySelector('img');
+        const counter = root.querySelector('.image-viewer-count');
+        const closeButton = root.querySelector('.image-viewer-close');
+        const prevButton = root.querySelector('.image-viewer-prev');
+        const nextButton = root.querySelector('.image-viewer-next');
+        let gallery = [];
+        let selected = 0;
+        let origin = null;
+        let phase = 'closed';
+        let motion = null;
+        let fade = null;
+        const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const rect = element => {
+            const box = element.closest('.profile-slot, .media-slot') || element;
+            const bounds = box.getBoundingClientRect();
+            return { left: bounds.left, top: bounds.top, width: bounds.width, height: bounds.height };
+        };
+        const destination = element => {
+            const ratio = element.naturalWidth / element.naturalHeight;
+            const width = Math.min(innerWidth * .8, innerHeight * .74 * ratio);
+            const height = width / ratio;
+            return { left: (innerWidth - width) / 2, top: (innerHeight - height) / 2, width, height };
+        };
+        const geometry = box => {
+            frame.style.left = box.left + 'px';
+            frame.style.top = box.top + 'px';
+            frame.style.width = box.width + 'px';
+            frame.style.height = box.height + 'px';
+            counter.style.top = Math.min(innerHeight - 32, box.top + box.height + 16) + 'px';
+        };
+        const keyframe = box => ({ left: box.left + 'px', top: box.top + 'px', width: box.width + 'px', height: box.height + 'px' });
+        const animateBox = (from, to, duration, easing, done) => {
+            geometry(from);
+            motion = frame.animate([keyframe(from), keyframe(to)], { duration, easing, fill: 'forwards' });
+            motion.onfinish = () => {
+                geometry(to);
+                motion.cancel();
+                motion = null;
+                done();
+            };
+        };
+        const fadeBackdrop = (from, to, duration, easing) => {
+            fade = backdrop.animate([{ opacity: from }, { opacity: to }], { duration, easing, fill: 'forwards' });
+            fade.onfinish = () => {
+                fade.cancel();
+                fade = null;
+            };
+        };
+        const updateSelection = () => {
+            const chosen = gallery[selected];
+            picture.src = chosen.currentSrc || chosen.src;
+            counter.textContent = (selected + 1) + ' / ' + gallery.length;
+            prevButton.hidden = gallery.length < 2;
+            nextButton.hidden = gallery.length < 2;
+            return destination(chosen);
+        };
+        function openImage(image) {
+            if (phase !== 'closed') return;
+            const collection = image.closest('#profile-photos, .report-media');
+            gallery = Array.from(collection.querySelectorAll('img'));
+            selected = gallery.indexOf(image);
+            origin = image;
+            root.hidden = false;
+            root.classList.remove('is-ready');
+            closeButton.focus();
+            phase = 'opening';
+            const target = updateSelection();
+            const start = rect(image);
+            const duration = reducedMotion() ? 0 : 450;
+            fadeBackdrop(0, 1, duration, 'ease-out');
+            animateBox(start, target, duration, 'cubic-bezier(.22,1,.36,1)', () => {
+                phase = 'open';
+                closeButton.focus();
+            });
+            requestAnimationFrame(() => {
+                if (phase === 'opening' || phase === 'open') root.classList.add('is-ready');
+            });
+        }
+        function closeImage() {
+            if (phase === 'closed' || phase === 'closing') return;
+            const from = frame.getBoundingClientRect();
+            if (motion) motion.cancel();
+            const dimOpacity = Number(getComputedStyle(backdrop).opacity);
+            if (fade) fade.cancel();
+            motion = null;
+            fade = null;
+            root.classList.remove('is-ready');
+            phase = 'closing';
+            const duration = reducedMotion() ? 0 : 350;
+            fadeBackdrop(dimOpacity, 0, duration, 'ease-in-out');
+            animateBox({ left: from.left, top: from.top, width: from.width, height: from.height }, rect(origin), duration, 'ease-in-out', () => {
+                root.hidden = true;
+                picture.removeAttribute('src');
+                phase = 'closed';
+                origin.focus();
+            });
+        }
+        function moveImage(delta) {
+            if (phase !== 'open' || gallery.length < 2) return;
+            selected = (selected + delta + gallery.length) % gallery.length;
+            origin = gallery[selected];
+            const from = frame.getBoundingClientRect();
+            const target = updateSelection();
+            animateBox({ left: from.left, top: from.top, width: from.width, height: from.height }, target, reducedMotion() ? 0 : 200, 'ease-in-out', () => {});
+        }
+        root.querySelector('.image-viewer-backdrop').addEventListener('click', closeImage);
+        closeButton.addEventListener('click', closeImage);
+        prevButton.addEventListener('click', () => moveImage(-1));
+        nextButton.addEventListener('click', () => moveImage(1));
+        root.addEventListener('keydown', event => {
+            if (event.key === 'Tab') {
+                const controls = gallery.length > 1 ? [closeButton, prevButton, nextButton] : [closeButton];
+                const index = controls.indexOf(document.activeElement);
+                controls[(index + (event.shiftKey ? controls.length - 1 : 1)) % controls.length].focus();
+            }
+            else if (event.key === 'Escape') closeImage();
+            else if (event.key === 'ArrowLeft') moveImage(-1);
+            else if (event.key === 'ArrowRight') moveImage(1);
+            else return;
+            event.preventDefault();
+            event.stopPropagation();
+        });
+        window.addEventListener('resize', () => {
+            if (phase === 'open') geometry(destination(gallery[selected]));
+        });
+        document.querySelectorAll('#profile-photos img').forEach(makeImageZoomable);
+        const selector = '#profile-photos img, .report-media img';
+        document.addEventListener('click', event => {
+            const image = event.target.closest?.(selector) || (
+                event.target.closest?.('.report-copy') && !event.target.closest('a, button')
+                    ? document.elementsFromPoint(event.clientX, event.clientY).find(element => element.matches?.('.report-media img'))
+                    : null
+            );
+            if (image) openImage(image);
+        });
+        document.addEventListener('keydown', event => {
+            if ((event.key !== 'Enter' && event.key !== ' ') || !event.target.matches?.(selector)) return;
+            event.preventDefault();
+            openImage(event.target);
+        });
+        window.addEventListener('wheel', event => {
+            if (root.hidden) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }, { capture: true, passive: false });
+        return { isOpen: () => !root.hidden };
     }
     function chooseKeyword(page, index, clicked) {
         const name = page.dataset.page, group = content[name].groups[index];
@@ -378,6 +541,7 @@
         navigate(base + (e.deltaY > 0 ? 1 : -1));
     }, { passive: false });
     window.addEventListener('keydown', e => {
+        if (imageViewer.isOpen()) return;
         if (['ArrowDown', 'PageDown'].includes(e.key)) {
             e.preventDefault();
             navigate(state.index + 1);
@@ -396,6 +560,7 @@
     renderProfile();
     renderProfileTools();
     initNav();
+    const imageViewer = setupImageViewer();
     fit();
     world.style.transform = focus(0);
     activatePage(0);

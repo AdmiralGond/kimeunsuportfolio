@@ -65,7 +65,7 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 .report-art{position:absolute;left:252.42px;top:222.54px;width:990.38px;height:451.64px;background:url('../resource/report_panel.svg') 0 0/100% 100% no-repeat}
 .report-label{position:absolute;left:20.4px;top:6px;color:#2ef3e9;font-size:22px;line-height:1.28;font-weight:500}
 .report-copy{position:absolute;top:58px;left:21.5px;right:21.5px;bottom:12px;overflow:visible;z-index:2;pointer-events:none}
-.report-body{width:100%;height:auto;min-height:100%;overflow:visible;scrollbar-width:none;padding-right:0;pointer-events:auto;color:#f3f0e9;font-size:16px;line-height:1.45}
+.report-body{width:100%;height:auto;min-height:0;overflow:visible;scrollbar-width:none;padding-right:0;pointer-events:auto;color:#f3f0e9;font-size:16px;line-height:1.45}
 .report-body p{margin:0 0 14px}
 .report-body table{width:100%;border-collapse:collapse;margin:8px 0 18px;font-size:14px}
 .report-body td,.report-body th{border:1px solid #419baa;vertical-align:top;text-align:left;padding:6px 8px}
@@ -114,3 +114,21 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 .profile-skill-meter:focus-visible{outline:2px solid #a2f5ec}
 @keyframes profile-skill-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @media(prefers-reduced-motion:reduce){.profile-skill-fill{animation:none}.profile-skill-tooltip{transition:none}}
+
+#profile-photos img,.report-media img{cursor:zoom-in}
+#profile-photos img:focus-visible,.report-media img:focus-visible{outline:2px solid #71fff8;outline-offset:2px}
+#image-viewer[hidden]{display:none}
+#image-viewer{position:fixed;inset:0;z-index:1000;font-family:Nexon,sans-serif;color:#fff}
+.image-viewer-backdrop{position:absolute;inset:0;background:rgba(14,18,28,.82)}
+.image-viewer-photo{position:fixed;overflow:hidden;border-radius:6px;box-shadow:0 12px 48px rgba(0,0,0,.5);pointer-events:auto;background:#000}
+.image-viewer-photo img{display:block;width:100%;height:100%;object-fit:contain}
+.image-viewer-control{position:fixed;z-index:1;opacity:0;pointer-events:none;transition:opacity 225ms ease}
+#image-viewer.is-ready .image-viewer-control{opacity:1;pointer-events:auto;transition-delay:225ms}
+.image-viewer-close,.image-viewer-arrow{display:grid;place-items:center;border:0;background:rgba(14,18,28,.55);color:#fff;line-height:1;cursor:pointer}
+.image-viewer-close{right:24px;top:24px;width:45px;height:45px;font-size:33px;border-radius:4px}
+.image-viewer-arrow{top:50%;width:46px;height:60px;transform:translateY(-50%);font-size:48px;border-radius:4px}
+.image-viewer-prev{left:22px}.image-viewer-next{right:22px}
+.image-viewer-arrow[hidden]{display:none}
+.image-viewer-close:hover,.image-viewer-arrow:hover{background:rgba(54,91,104,.9)}
+.image-viewer-count{left:50%;transform:translateX(-50%);text-align:center;white-space:nowrap;font-size:14px;font-weight:500}
+@media(prefers-reduced-motion:reduce){.image-viewer-control{transition:none}#image-viewer.is-ready .image-viewer-control{transition-delay:0ms}}
