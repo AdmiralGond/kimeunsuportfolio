@@ -70,9 +70,10 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 .report-copy{position:absolute;top:58px;left:21.5px;right:21.5px;bottom:12px;overflow:visible;z-index:2;pointer-events:none}
 .report-body{width:100%;height:auto;min-height:0;overflow:visible;scrollbar-width:none;padding-right:0;pointer-events:auto;color:#f3f0e9;font-size:16px;line-height:1.45}
 .report-body p{margin:0 0 14px}
-.report-body table{width:100%;border-collapse:collapse;margin:8px 0 18px;font-size:14px}
+.report-body table{width:100%;border-collapse:collapse;margin:0 0 18px;font-family:Nexon,sans-serif;letter-spacing:0}
 .report-body td,.report-body th{border:1px solid #419baa;vertical-align:top;text-align:left;padding:6px 8px}
-.report-body th{background:#18495b;color:#8af5e6;font-weight:500}
+.report-body th{background:#18495b;color:#8af5e6;font-size:14px;font-weight:300;line-height:1.45}
+.report-body td{font-size:12px;font-weight:400;line-height:1.45}
 .report-body a{overflow-wrap:anywhere}
 .report-media{position:absolute;z-index:1;left:21.5px;right:21.5px;bottom:23px;height:181.39px;display:flex;justify-content:space-between;pointer-events:none}
 .media-slot{display:flex;align-items:center;justify-content:center;flex:0 0 450.17px;width:450.17px;height:181.39px;overflow:hidden;pointer-events:auto;border:1px solid #f3f0e9}
@@ -89,7 +90,7 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 
 .latin-transliteration{font:400 16px/1.45 "Arial","Noto Sans",sans-serif;letter-spacing:0}
 
-.report-body table[data-table="play_subculture"]{table-layout:fixed;width:100%;font-size:16px;line-height:1.45}
+.report-body table[data-table="play_subculture"]{table-layout:fixed;width:100%}
 .report-body table[data-table="play_subculture"] td,.report-body table[data-table="play_subculture"] th{word-break:keep-all;overflow-wrap:normal;hyphens:none;white-space:normal}
 #scroll-guide{position:absolute;right:180px;top:505px;width:35px;height:262px;display:flex;justify-content:space-between;align-items:flex-start;z-index:20;pointer-events:none;color:#f1f8f9}
 #scroll-guide[hidden]{display:none!important}

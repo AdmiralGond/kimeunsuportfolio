@@ -12,22 +12,23 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Publish v0.10.2
+      - name: Publish v0.10.3
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.2.zip" "$GITHUB_SHA" -- README.md index.html resource source
-          cat > "$RUNNER_TEMP/v0.10.2-notes.md" <<'EOF'
-          - 카메라 전환 중 축소량을 기존의 1/5로 조정
-          - 배경 보조 그리드 간격을 6px, 주요 그리드 간격을 30px로 조정
-          - B2 서브컬처 게임 경험 표를 본문 위로 배치
+          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.3.zip" "$GITHUB_SHA" -- README.md index.html resource source
+          cat > "$RUNNER_TEMP/v0.10.3-notes.md" <<'EOF'
+          - B2 '나에게 서브컬처란'에 서브컬처 정의 표를 배치하고 표를 본문 위로 이동
+          - 모든 보고서 표의 제목행·본문행 글꼴 및 상단 정렬 통일
+          - 표의 셀을 그대로 복사한 본문 항목 제거, 문장화된 설명 유지
+          - 콘텐츠 키워드마다 좌우 PNG 이미지 2장 연결
           EOF
-          if ! gh release view v0.10.2 >/dev/null 2>&1; then
-            gh release create v0.10.2 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.2' --notes-file "$RUNNER_TEMP/v0.10.2-notes.md"
+          if ! gh release view v0.10.3 >/dev/null 2>&1; then
+            gh release create v0.10.3 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.3' --notes-file "$RUNNER_TEMP/v0.10.3-notes.md"
           else
-            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.10.2" -f sha="$GITHUB_SHA" -F force=true >/dev/null
-            gh release edit v0.10.2 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.2-notes.md"
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.10.3" -f sha="$GITHUB_SHA" -F force=true >/dev/null
+            gh release edit v0.10.3 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.3-notes.md"
           fi
-          gh release upload v0.10.2 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.2.zip" --clobber
+          gh release upload v0.10.3 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.3.zip" --clobber
