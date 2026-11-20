@@ -41,10 +41,10 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 #quote-profile .credit{font-size:14px;font-weight:300;color:#e2edf0}
 #profile-photos{position:absolute;left:250.12px;top:354.29px;display:grid;grid-template-columns:104.09px 104.09px 210.11px;gap:28.08px;height:129.42px;overflow:visible}
 #profile-photos img{display:block;width:auto;max-width:none;height:129.42px;object-fit:unset;flex-shrink:0;border:0}
-.profile-micro-caption,.scroll-guide-text{font-family:Nexon,sans-serif;font-size:8px;font-weight:700;line-height:1.2;letter-spacing:.1px;color:#87bbb9}
+.profile-micro-caption,.scroll-guide-text{font-family:Nexon,sans-serif;font-size:8px;font-weight:700;line-height:1.2;letter-spacing:.1px;color:#f1f8f9}
 .profile-micro-caption{position:absolute;white-space:nowrap;pointer-events:none}
 #profile-image-caption{left:calc(250.12px + 104.09px + 28.08px);top:487.5px}
-#profile-tools-caption{left:230px;top:746px}
+#profile-tools-caption{left:249.62px;top:746px;text-align:left}
 #identity{position:absolute;left:930.4px;top:275px;width:360px;color:#1c696b}
 #identity h2{margin:0;font-size:28px;line-height:1.25;font-weight:500;letter-spacing:-.3px}
 #identity-cells{margin-top:44.29px;font-size:16px;line-height:1.45;word-break:keep-all}
@@ -91,7 +91,7 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 
 .report-body table[data-table="play_subculture"]{table-layout:fixed;width:100%;font-size:16px;line-height:1.45}
 .report-body table[data-table="play_subculture"] td,.report-body table[data-table="play_subculture"] th{word-break:keep-all;overflow-wrap:normal;hyphens:none;white-space:normal}
-#scroll-guide{position:absolute;right:180px;top:505px;width:35px;height:262px;display:flex;justify-content:space-between;align-items:flex-start;z-index:20;pointer-events:none;color:#87bbb9}
+#scroll-guide{position:absolute;right:180px;top:505px;width:35px;height:262px;display:flex;justify-content:space-between;align-items:flex-start;z-index:20;pointer-events:none;color:#f1f8f9}
 #scroll-guide[hidden]{display:none!important}
 .scroll-guide-text{writing-mode:vertical-rl;text-orientation:upright;white-space:nowrap}
 .scroll-guide-arrow{position:relative;display:block;margin-top:6px;width:1px;height:225px;background:currentColor;opacity:.85}
