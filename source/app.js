@@ -410,6 +410,7 @@
         const fields = [['이름', profileStrings[3]], ['생년월일', profileStrings[4]], ['학교', profileStrings[5] + ' · ' + profileStrings[6]], ['학점', profileStrings[7]], ['Tel', profileStrings[8].replace(/^Tel\s*:\s*/, '')], ['Email', profileStrings[9].replace(/^Email\s*:\s*/, '')]];
         $('identity-cells').innerHTML = fields.map(([k, v]) => '<div class="row"><span class="key">' + escapeHTML(k) + '</span><span class="value">' + rich(v) + '</span></div>').join('');
         $('profile-image-caption').textContent = profileStrings[10];
+        $('profile-tools-caption').textContent = new Map(content.profile.rows).get('1022');
     }
     function refreshCommon(index) {
         $('scroll-guide').hidden = index !== 0;
