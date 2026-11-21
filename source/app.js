@@ -3,9 +3,11 @@
     const M = JSON.parse(document.getElementById('portfolio-data').textContent);
     const $ = id => document.getElementById(id);
     const ORDER = M.pages, CODES = M.pageCodes, SCALE = M.cameraScale || 9.2, VX = 952.5, VY = 455.5;
+    const UI = M.ui;
     const pageStrings = Object.fromEntries(ORDER.map((name, i) => [name, M.strings[M.stringFiles[i]]]));
-    const GUIDE = '키워드 버튼 위에 마우스 포인터를 올리거나 버튼을 누르면 해당 키워드의 내용이 여기에 표시됩니다.';
-    const NAV = [['프로필', 0], ['소개', 1], ['게임을 개발하고,', 2], ['게임을 플레이하며,', 3], ['게임을 관찰한다.', 4], ['1인 게임 개발 프로젝트', 5], ['기획 문서 작성 이력', 7], [pageStrings.history[0][1], 8]];
+    const GUIDE = UI.guide;
+    const pageTitles = Object.fromEntries(ORDER.slice(1).map(name => [name, pageStrings[name].find(([id]) => id.endsWith('_title'))[1]]));
+    const NAV = [[UI.nav_profile, 0], [pageTitles.intro, 1], [pageTitles.develop, 2], [pageTitles.play, 3], [pageTitles.observe, 4], [UI.nav_rts, 5], [pageTitles.documents, 7], [pageTitles.history, 8]];
     const escapeHTML = v => String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     function rich(v) {
         const raw = String(v), pattern = /\[((?:\\.|[^\]\\])*)\]\((https:\/\/[^\s)]+)\)/g;
@@ -29,13 +31,13 @@
             if (id.endsWith('_keyword')) {
                 current = { title: text, body: [] };
                 groups.push(current);
-            } else if (current) {
+            } else if (current && !id.includes('_cell_')) {
                 current.body.push(text);
             }
         });
         content[name] = { rows, groups };
     });
-    const profileStrings = content.profile.rows.map(row => row[1]);
+    const profileStrings = new Map(content.profile.rows);
     const media = new Map(M.media.map(item => [item.page + '|' + item.keyword, item.paths]));
     const state = {
         index: 0,
@@ -59,7 +61,8 @@
             const section = document.createElement('section');
             section.className = 'world-page report-page';
             section.dataset.page = name;
-            section.innerHTML = '<div class="keyword-row"></div><div class="report-art"><div class="report-label">보고서</div><div class="report-copy"><div class="report-body" aria-live="polite"></div></div><div class="report-media"></div></div>';
+            section.setAttribute('aria-label', pageTitles[name]);
+            section.innerHTML = '<div class="keyword-row"></div><div class="report-art"><div class="report-label"></div><div class="report-copy"><div class="report-body" aria-live="polite"></div></div><div class="report-media"></div></div>';
             $('report-pages').appendChild(section);
             pageMap.set(name, section);
         }
@@ -157,7 +160,7 @@
     function makeImageZoomable(image) {
         image.tabIndex = 0;
         image.setAttribute('role', 'button');
-        image.setAttribute('aria-label', '이미지 확대');
+        image.setAttribute('aria-label', UI.lightbox_open);
     }
     function setupImageViewer() {
         const root = document.createElement('div');
@@ -165,8 +168,8 @@
         root.hidden = true;
         root.setAttribute('role', 'dialog');
         root.setAttribute('aria-modal', 'true');
-        root.setAttribute('aria-label', '이미지 확대');
-        root.innerHTML = '<div class="image-viewer-backdrop"></div><div class="image-viewer-photo"><img alt=""></div><button type="button" class="image-viewer-close image-viewer-control" aria-label="닫기">×</button><button type="button" class="image-viewer-prev image-viewer-arrow image-viewer-control" aria-label="이전 이미지">‹</button><button type="button" class="image-viewer-next image-viewer-arrow image-viewer-control" aria-label="다음 이미지">›</button><div class="image-viewer-count image-viewer-control" aria-live="polite"></div>';
+        root.setAttribute('aria-label', UI.lightbox_open);
+        root.innerHTML = '<div class="image-viewer-backdrop"></div><div class="image-viewer-photo"><img alt=""></div><button type="button" class="image-viewer-close image-viewer-control"></button><button type="button" class="image-viewer-prev image-viewer-arrow image-viewer-control"></button><button type="button" class="image-viewer-next image-viewer-arrow image-viewer-control"></button><div class="image-viewer-count image-viewer-control" aria-live="polite"></div>';
         document.body.appendChild(root);
         const backdrop = root.querySelector('.image-viewer-backdrop');
         const frame = root.querySelector('.image-viewer-photo');
@@ -175,6 +178,10 @@
         const closeButton = root.querySelector('.image-viewer-close');
         const prevButton = root.querySelector('.image-viewer-prev');
         const nextButton = root.querySelector('.image-viewer-next');
+        for (const [button, label, symbol] of [[closeButton, UI.lightbox_close, UI.lightbox_close_symbol], [prevButton, UI.lightbox_previous, UI.lightbox_prev_symbol], [nextButton, UI.lightbox_next, UI.lightbox_next_symbol]]) {
+            button.setAttribute('aria-label', label);
+            button.textContent = symbol;
+        }
         let gallery = [];
         let selected = 0;
         let origin = null;
@@ -327,7 +334,7 @@
             return;
         }
         page.dataset.selected = String(index);
-        page.querySelector('.report-label').textContent = '보고서 - ' + group.title;
+        page.querySelector('.report-label').textContent = UI.report_prefix + group.title;
         page.querySelectorAll('.keyword-row button').forEach((b, j) => b.classList.toggle('active', j === index));
         showMedia(page, name, group.title);
         const attachments = reportAttachments(name, group.title);
@@ -347,7 +354,7 @@
     }
     function resetReport(page) {
         delete page.dataset.selected;
-        page.querySelector('.report-label').textContent = '보고서';
+        page.querySelector('.report-label').textContent = UI.report_title;
         page.querySelectorAll('.keyword-row button').forEach(b => b.classList.remove('active'));
         page.querySelector('.report-media').replaceChildren();
         page.classList.remove('media-active');
@@ -356,7 +363,7 @@
     function renderProfileTools() {
         const root = $('profile-tool-bars');
         root.replaceChildren();
-        const byId = new Map(pageStrings.profile);
+        const byId = profileStrings;
         for (const tool of M.profileTools) {
             const row = document.createElement('div');
             row.className = 'profile-skill';
@@ -404,14 +411,14 @@
         }
     }
     function renderProfile() {
-        const q = profileStrings[2].split(/<br\s*\/?\s*>/i);
-        $('hero-first').textContent = profileStrings[0];
-        $('hero-second').textContent = profileStrings[1];
+        const q = profileStrings.get('1003').split(/<br\s*\/?\s*>/i);
+        $('hero-first').textContent = profileStrings.get('1001');
+        $('hero-second').textContent = profileStrings.get('1002');
         $('quote-profile').innerHTML = '<div>' + rich(q[0]) + '</div><div>' + rich(q[1] || '') + '</div><div class="credit">' + rich(q.slice(2).join('<br>')) + '</div>';
-        const fields = [['이름', profileStrings[3]], ['생년월일', profileStrings[4]], ['학교', profileStrings[5] + ' · ' + profileStrings[6]], ['학점', profileStrings[7]], ['Tel', profileStrings[8].replace(/^Tel\s*:\s*/, '')], ['Email', profileStrings[9].replace(/^Email\s*:\s*/, '')]];
+        const fields = [[UI.profile_name, profileStrings.get('1004')], [UI.profile_birthday, profileStrings.get('1005')], [UI.profile_school, profileStrings.get('1006')], [UI.profile_grades, profileStrings.get('1008')], [UI.profile_phone, profileStrings.get('1009')], [UI.profile_email, profileStrings.get('1010')]];
         $('identity-cells').innerHTML = fields.map(([k, v]) => '<div class="row"><span class="key">' + escapeHTML(k) + '</span><span class="value">' + rich(v) + '</span></div>').join('');
-        $('profile-image-caption').textContent = profileStrings[10];
-        $('profile-tools-caption').textContent = new Map(content.profile.rows).get('1022');
+        $('profile-image-caption').textContent = profileStrings.get('1011');
+        $('profile-tools-caption').textContent = profileStrings.get('1022');
     }
     function refreshCommon(index) {
         $('scroll-guide').hidden = index !== 0;
@@ -515,9 +522,23 @@
             button.type = 'button';
             button.dataset.page = String(i);
             button.textContent = CODES[i] + ' - ' + label;
+            button.dataset.activeMarker = UI.nav_marker;
             button.addEventListener('click', () => navigate(i));
             list.appendChild(button);
         }
+    }
+    function renderStaticLabels() {
+        $('brand').textContent = UI.brand;
+        $('identity').querySelector('h2').textContent = UI.profile_heading;
+        document.querySelectorAll('.tool-title').forEach((title, i) => title.textContent = UI['panel_' + (i + 1)]);
+        $('profile-tool-bars').setAttribute('aria-label', UI.profile_tools_aria);
+        $('scroll-guide').setAttribute('aria-label', UI.scroll_aria);
+        $('scroll-guide').querySelector('.scroll-guide-text').textContent = UI.scroll_guide;
+        $('arsenal').setAttribute('aria-label', UI.arsenal);
+        $('arsenal').querySelector('h2').textContent = UI.arsenal;
+        $('starboard').lastElementChild.textContent = UI.starboard;
+        document.querySelector('.top-nav').setAttribute('aria-label', UI.top_nav_aria);
+        document.querySelectorAll('.top-nav button').forEach(button => button.textContent = pageTitles[button.dataset.target]);
     }
     window.addEventListener('pointermove', e => {
         state.pointerX = e.clientX;
@@ -558,6 +579,7 @@
     $('brand').addEventListener('click', () => navigate(0));
     document.querySelectorAll('.top-nav button').forEach(b => b.addEventListener('click', () => navigate(ORDER.indexOf(b.dataset.target))));
     $('starboard').addEventListener('click', () => window.open('https://youtu.be/mS9qQByGAWE?si=cqDjgb7t6tDbiFTW', '_blank', 'noopener,noreferrer'));
+    renderStaticLabels();
     installWorldPages();
     initReports();
     renderProfile();

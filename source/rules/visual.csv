@@ -1,4 +1,4 @@
-rule,value
+﻿rule,value
 ship_scale,11.90625
 keyword_exit_pixels,-50
 keyword_enter_pixels,50

@@ -32,7 +32,7 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 #arsenal-items{display:flex;flex-direction:column;gap:0}
 #arsenal-items button{width:100%;background:none;border:0;text-align:left;padding:0;white-space:normal;overflow-wrap:normal;font-size:16px;letter-spacing:0;line-height:1.45;font-weight:400;color:#6cb9aa}
 #arsenal-items button.active{color:#f1ffff}
-#arsenal-items button.active:before{content:'▶';display:inline-block;font-size:12px;margin-left:-12px;margin-right:3px}
+#arsenal-items button.active:before{content:attr(data-active-marker);display:inline-block;font-size:12px;margin-left:-12px;margin-right:3px}
 #footer-caption{position:absolute;left:93px;top:789px;color:#3bb5aa;font-size:14px;font-weight:300}
 #hero{position:absolute;left:242px;top:160px;white-space:nowrap}
 #hero-first{font-size:36px;line-height:1.2;font-weight:700;letter-spacing:-.5px;color:#1c696b}

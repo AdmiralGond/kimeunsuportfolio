@@ -1,4 +1,4 @@
-page,page_number,order,ship_source_center_x,ship_source_center_y,ship_scale,world_anchor_type,guide_rect_x,guide_rect_y,guide_rect_width,guide_rect_height
+﻿page,page_number,order,ship_source_center_x,ship_source_center_y,ship_scale,world_anchor_type,guide_rect_x,guide_rect_y,guide_rect_width,guide_rect_height
 profile,A1,0,375.5,187.5,11.90625,blank,296,143,160,90
 intro,A2,1,375.5,403.5,11.90625,hangar,296,359,160,90
 develop,B1,2,596.5,403.5,11.90625,hangar,517,359,160,90

@@ -1,4 +1,4 @@
-tool,panel,order,score,maximum,icon,tooltip_id,url
+﻿tool,panel,order,score,maximum,icon,tooltip_id,url
 powerpoint,1,1,6,10,resource/tools/powerpoint.svg,1014,
 excel,1,2,4,10,resource/tools/excel.svg,1015,
 word,2,1,1,10,resource/tools/word.svg,1016,

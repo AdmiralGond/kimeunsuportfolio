@@ -23,6 +23,10 @@ jobs:
           - 문자열 CSV 9개 파일명에 페이지 순번 1~9 적용
           - 페이지별 문자열 참조를 CSV 순서에 맞춰 통합
           - 빌드 단계의 파일명 검증과 README 파일명 규칙 수정
+          - 미사용 중복 문구 삭제 및 하나의 본문에 속하는 문자열 ID 통합
+          - 공용 UI·제원 항목명·표 셀 문구를 문자열 CSV로 이관
+          - 이미지·영상·표를 키워드 및 셀 문자열 ID로 연결
+          - 모든 CSV를 UTF-8 BOM 형식으로 통일
           EOF
           if ! gh release view v0.10.4 >/dev/null 2>&1; then
             gh release create v0.10.4 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.4' --notes-file "$RUNNER_TEMP/v0.10.4-notes.md"
