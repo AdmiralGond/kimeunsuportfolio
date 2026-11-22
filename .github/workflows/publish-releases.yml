@@ -22,13 +22,16 @@ jobs:
           set -euo pipefail
           git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.6.zip" "$GITHUB_SHA" -- README.md index.html resource source
           cat > "$RUNNER_TEMP/v0.10.6-notes.md" <<'EOF'
-          - v0.10.5를 기준으로 첨부된 A1·A2·B1 문자열 CSV 3개 반영
-          - B1 키워드 명칭 변경에 따른 이미지 및 영상 연결 유지
-          - CSV UTF-8 BOM 인코딩 보존 및 빌드 동기화 검사
+          - 페이지별 문자열 CSV를 첨부된 A2·B1·B2 내용으로 갱신
+          - A1 문자열 1054의 기존 값 ' |' 유지
+          - A2 2건 및 B2 1건의 URL을 클릭 가능한 링크로 변환
+          - B2 빈 본문 키워드의 기존 안내문 유지
+          - CSV UTF-8 BOM과 index.html 빌드 일치 확인
           EOF
           if ! gh release view v0.10.6 >/dev/null 2>&1; then
             gh release create v0.10.6 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.6' --notes-file "$RUNNER_TEMP/v0.10.6-notes.md"
           else
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.10.6" -f sha="$GITHUB_SHA" -F force=true >/dev/null
             gh release edit v0.10.6 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.6-notes.md"
           fi
           gh release upload v0.10.6 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.6.zip" --clobber
