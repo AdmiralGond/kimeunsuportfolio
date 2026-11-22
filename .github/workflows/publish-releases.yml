@@ -24,13 +24,15 @@ jobs:
           cat > "$RUNNER_TEMP/v0.10.8-notes.md" <<'EOF'
           - A2·B2·C2 페이지의 문자열 CSV를 제공된 내용으로 갱신
           - C2 문서 작성 이력 본문 앞에 4열 표 추가: 제목 1행과 데이터 6행
-          - 기존 표의 폰트·여백 기준 및 셀 내 <br> 줄바꿈 유지
+          - C2 칸코레 - 제공치 계산식 마지막 열의 줄바꿈을 <br> 1개로 수정
+          - 기존 표의 폰트·여백 기준 유지
           - C2 문서 포트폴리오 링크를 클릭 가능한 링크로 표기
           - CSV UTF-8 BOM 및 정적 빌드 동기화 확인
           EOF
           if ! gh release view v0.10.8 >/dev/null 2>&1; then
             gh release create v0.10.8 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.8' --notes-file "$RUNNER_TEMP/v0.10.8-notes.md"
           else
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.10.8" -f sha="$GITHUB_SHA" -F force=true >/dev/null
             gh release edit v0.10.8 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.8-notes.md"
           fi
           gh release upload v0.10.8 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.8.zip" --clobber
