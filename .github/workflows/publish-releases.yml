@@ -26,11 +26,14 @@ jobs:
           - D1 AI 워크 플로우 90101 본문 추가
           - C2 기존 표 부모 ID와 표 파일 및 스타일 보존
           - C2·D1 문서 링크를 클릭 가능한 형식으로 적용
+          - A2 20201·20301과 B2 40201의 (URL) 표기를 클릭 가능한 링크로 복구
+          - C2 기여하고 싶습니다. 80401의 지정 위치에 <br> 추가
           - CSV UTF-8 BOM 및 index.html 빌드 검사
           EOF
           if ! gh release view v0.10.9 >/dev/null 2>&1; then
             gh release create v0.10.9 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.9' --notes-file "$RUNNER_TEMP/v0.10.9-notes.md"
           else
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.10.9" -f sha="$GITHUB_SHA" -F force=true >/dev/null
             gh release edit v0.10.9 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.9-notes.md"
           fi
           gh release upload v0.10.9 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.9.zip" --clobber
