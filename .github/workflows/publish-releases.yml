@@ -14,23 +14,21 @@ jobs:
           fetch-depth: 0
       - name: Check CSV build
         run: python source/build.py check
-      - name: Publish v0.10.5
+      - name: Publish v0.10.6
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.5.zip" "$GITHUB_SHA" -- README.md index.html resource source
-          cat > "$RUNNER_TEMP/v0.10.5-notes.md" <<'EOF'
-          - v0.10.4 첫 번째 수정본 기준 문자열 CSV 구조 정리
-          - 제목·표·본문 역할 구분, 키워드당 단일 본문 문자열
-          - 사용 중인 4개 표를 페이지·키워드별 CSV로 분리
-          - 사용자 표시 문구의 페이지별 CSV 참조와 README 사용 지침
-          - CSV UTF-8 BOM 인코딩 및 빌드 일치 검사
+          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.6.zip" "$GITHUB_SHA" -- README.md index.html resource source
+          cat > "$RUNNER_TEMP/v0.10.6-notes.md" <<'EOF'
+          - v0.10.5를 기준으로 첨부된 A1·A2·B1 문자열 CSV 3개 반영
+          - B1 키워드 명칭 변경에 따른 이미지 및 영상 연결 유지
+          - CSV UTF-8 BOM 인코딩 보존 및 빌드 동기화 검사
           EOF
-          if ! gh release view v0.10.5 >/dev/null 2>&1; then
-            gh release create v0.10.5 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.5' --notes-file "$RUNNER_TEMP/v0.10.5-notes.md"
+          if ! gh release view v0.10.6 >/dev/null 2>&1; then
+            gh release create v0.10.6 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.6' --notes-file "$RUNNER_TEMP/v0.10.6-notes.md"
           else
-            gh release edit v0.10.5 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.5-notes.md"
+            gh release edit v0.10.6 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.6-notes.md"
           fi
-          gh release upload v0.10.5 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.5.zip" --clobber
+          gh release upload v0.10.6 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.6.zip" --clobber
