@@ -36,7 +36,7 @@ python source/build.py build
 
 ## 표 CSV 관리
 
-사용 중인 표 네 개는 `source/rules` 폴더의 `table_{page}_{keyword_id}.csv`로 각각 관리합니다.
+사용 중인 표 다섯 개는 `source/rules` 폴더의 `table_{page}_{keyword_id}.csv`로 각각 관리합니다.
 
 | 키워드 부모 ID | 파일명 |
 | --- | --- |
@@ -44,8 +44,9 @@ python source/build.py build
 | `4002_table` | `table_play_4002_keyword.csv` |
 | `4004_table` | `table_play_4004_keyword.csv` |
 | `7002_table` | `table_tamagotchi_7002_keyword.csv` |
+| `8001_table` | `table_documents_8001_keyword.csv` |
 
-각 표 CSV는 `table_id,rows_json,col_widths_px,insert_after_paragraph` 형식으로 정확히 한 행을 관리합니다. `rows_json`에 표의 셀 텍스트·링크·행·열을 그대로 기록하고, 표 셀마다 별도의 문자열 ID를 만들지 않습니다. 표는 해당 키워드의 본문보다 먼저 표시합니다.
+각 표 CSV는 `table_id,rows_json,col_widths_px,insert_after_paragraph` 형식으로 정확히 한 행을 관리합니다. C2 `문서 작성 이력` 표는 제목행 1개와 데이터행 6개로 구성하며 빈 행을 포함하지 않고, `<br>` 및 `<br><br>`은 원문 그대로 렌더링합니다. `rows_json`에 표의 셀 텍스트·링크·행·열을 그대로 기록하고, 표 셀마다 별도의 문자열 ID를 만들지 않습니다. 표는 해당 키워드의 본문보다 먼저 표시합니다.
 
 이전에 존재하던 통합 `tables.csv`와 렌더링에 쓰이지 않던 프로필 표 기록은 사용하지 않습니다.
 
@@ -55,7 +56,7 @@ python source/build.py build
 - `python source/build.py check`로 실행 데이터가 원본 CSV와 일치하는지 검증합니다.
 - 빌드 검사는 본문 ID 중복, 표 부모 ID 중복·누락, 존재하지 않는 표 파일 및 미사용 표 파일을 오류로 처리합니다.
 - 외부 CSV의 `fetch()` 없이 HTML 안의 실행 데이터를 사용하므로 `index.html`을 직접 더블클릭해 실행할 수 있습니다.
-- 기존 v0.10.6은 보존하고, 수정 결과물은 v0.10.7로 구분합니다.
+- 기존 v0.10.7은 보존하고, 수정 결과물은 v0.10.8로 구분합니다.
 
 ## 외부 영상 동작
 

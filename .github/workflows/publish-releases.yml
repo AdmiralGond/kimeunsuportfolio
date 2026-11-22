@@ -14,24 +14,23 @@ jobs:
           fetch-depth: 0
       - name: Check CSV build
         run: python source/build.py check
-      - name: Publish v0.10.7
+      - name: Publish v0.10.8
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.7.zip" "$GITHUB_SHA" -- README.md index.html resource source
-          cat > "$RUNNER_TEMP/v0.10.7-notes.md" <<'EOF'
-          - 첨부 A1·A2·B1·B2·B3 문자열 CSV 반영
-          - B2 인간 튜토리얼 본문 ID 40301 추가 및 기존 표 유지
-          - B1 프로젝트 테스트 영상 2개 자동 출력 제거
-          - videos.csv 삭제 및 우현으로 버튼 기존 새 탭 링크 유지
-          - CSV UTF-8 BOM 및 index.html 정적 빌드 동기화
+          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.8.zip" "$GITHUB_SHA" -- README.md index.html resource source
+          cat > "$RUNNER_TEMP/v0.10.8-notes.md" <<'EOF'
+          - A2·B2·C2 페이지의 문자열 CSV를 제공된 내용으로 갱신
+          - C2 문서 작성 이력 본문 앞에 4열 표 추가: 제목 1행과 데이터 6행
+          - 기존 표의 폰트·여백 기준 및 셀 내 <br> 줄바꿈 유지
+          - C2 문서 포트폴리오 링크를 클릭 가능한 링크로 표기
+          - CSV UTF-8 BOM 및 정적 빌드 동기화 확인
           EOF
-          if ! gh release view v0.10.7 >/dev/null 2>&1; then
-            gh release create v0.10.7 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.7' --notes-file "$RUNNER_TEMP/v0.10.7-notes.md"
+          if ! gh release view v0.10.8 >/dev/null 2>&1; then
+            gh release create v0.10.8 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.8' --notes-file "$RUNNER_TEMP/v0.10.8-notes.md"
           else
-            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.10.7" -f sha="$GITHUB_SHA" -F force=true >/dev/null
-            gh release edit v0.10.7 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.7-notes.md"
+            gh release edit v0.10.8 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.8-notes.md"
           fi
-          gh release upload v0.10.7 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.7.zip" --clobber
+          gh release upload v0.10.8 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.8.zip" --clobber
