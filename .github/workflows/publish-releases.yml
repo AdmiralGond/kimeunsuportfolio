@@ -22,15 +22,16 @@ jobs:
           set -euo pipefail
           git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.7.zip" "$GITHUB_SHA" -- README.md index.html resource source
           cat > "$RUNNER_TEMP/v0.10.7-notes.md" <<'EOF'
-          - v0.10.6을 기준으로 첨부 A1·A2·B1·B2·B3 문자열 CSV 반영
-          - B2 인간 튜토리얼 본문 ID 40301 추가 및 기존 표 연결 유지
-          - 우현으로 YouTube URL을 기존 videos.csv로 이관
-          - B1 동영상 2개와 우현으로 1개를 videos.csv에서 관리
-          - CSV UTF-8 BOM 및 index.html 정적 빌드 검사
+          - 첨부 A1·A2·B1·B2·B3 문자열 CSV 반영
+          - B2 인간 튜토리얼 본문 ID 40301 추가 및 기존 표 유지
+          - B1 프로젝트 테스트 영상 2개 자동 출력 제거
+          - videos.csv 삭제 및 우현으로 버튼 기존 새 탭 링크 유지
+          - CSV UTF-8 BOM 및 index.html 정적 빌드 동기화
           EOF
           if ! gh release view v0.10.7 >/dev/null 2>&1; then
             gh release create v0.10.7 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.7' --notes-file "$RUNNER_TEMP/v0.10.7-notes.md"
           else
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.10.7" -f sha="$GITHUB_SHA" -F force=true >/dev/null
             gh release edit v0.10.7 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.7-notes.md"
           fi
           gh release upload v0.10.7 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.7.zip" --clobber

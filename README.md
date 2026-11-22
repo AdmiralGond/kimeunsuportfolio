@@ -5,7 +5,7 @@
 ## 콘텐츠와 규칙 수정
 
 - 문자열: `source/strings/string_{page}_{order}.csv` (`pages.csv`의 0부터 시작하는 `order`에 1을 더한 페이지 순번)
-- 화면 좌표·이미지 연결·표·영상·도구 점수 및 툴팁: `source/rules/*.csv`
+- 화면 좌표·이미지 연결·표·도구 점수 및 툴팁: `source/rules/*.csv`
 - 화면 표현: `source/style.css`, 상호작용: `source/app.js`
 - 이미지·SVG·OTF: `resource/`
 
@@ -57,11 +57,8 @@ python source/build.py build
 - 외부 CSV의 `fetch()` 없이 HTML 안의 실행 데이터를 사용하므로 `index.html`을 직접 더블클릭해 실행할 수 있습니다.
 - 기존 v0.10.6은 보존하고, 수정 결과물은 v0.10.7로 구분합니다.
 
-## YouTube 링크 관리
+## 외부 영상 동작
 
-YouTube URL은 `source/rules/videos.csv`의 `video_url` 열에서 일괄 관리하며, HTML·JavaScript 코드에 URL을 직접 작성하지 않습니다.
-
-- B1 `프로젝트 테스트 영상`의 동영상 2개는 `page=develop`, `keyword=프로젝트 테스트 영상`으로 연결합니다.
-- `우현으로` 버튼의 동영상 1개는 `page=profile`, 빈 `keyword`로 연결합니다. 해당 버튼은 `source/app.js`에서 `videos.csv`로부터 생성된 실행 데이터를 조회해 기존처럼 새 탭을 엽니다.
-- `index.html`의 `portfolio-data`에 있는 URL은 CSV를 빌드해 생성한 데이터이며 관리 원본이 아닙니다.
-- `source/rules/videos.csv`의 값을 변경한 다음 `python source/build.py build`, `python source/build.py check`를 실행해 동기화합니다.
+- B1 `프로젝트 테스트 영상`에 자동 첨부되던 YouTube 링크와 `source/rules/videos.csv`는 사용하지 않습니다.
+- `우현으로` 버튼의 고정 YouTube 주소는 `source/app.js`에서 직접 지정하며, 기존처럼 새 탭에서 엽니다.
+- 프로젝트 본문의 클릭 가능한 외부 링크는 해당 페이지의 문자열 CSV에서 관리합니다.

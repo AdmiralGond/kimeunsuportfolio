@@ -112,7 +112,6 @@ def manifest():
     if stored_tables != referenced_table_paths:
         raise ValueError(f'미사용 또는 누락된 표 CSV: {sorted(stored_tables ^ referenced_table_paths)}')
 
-    videos = records(RULES / 'videos.csv')
     tools = []
     for row in records(RULES / 'profile_tools.csv'):
         if row['tooltip_id'] not in indexed['profile']:
@@ -137,7 +136,6 @@ def manifest():
         'strings': page_strings,
         'media': media,
         'tables': tables,
-        'videos': videos,
         'transitionMs': int(visual['camera_transition_ms']),
         'profileTools': tools,
     }

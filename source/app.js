@@ -142,12 +142,6 @@
                 append += html;
             }
         }
-        for (const video of M.videos) {
-            if (video.page !== name || video.keyword !== group.title)
-                continue;
-            const url = escapeHTML(video.video_url);
-            append += '<p><a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a></p>';
-        }
         return { append, insert };
     }
     function stopTextAnim(page) {
@@ -622,9 +616,7 @@
     window.addEventListener('resize', fit);
     $('brand').addEventListener('click', () => navigate(0));
     document.querySelectorAll('.top-nav button').forEach(b => b.addEventListener('click', () => navigate(ORDER.indexOf(b.dataset.target))));
-    const starboardVideo = M.videos.find(video => video.page === 'profile' && video.keyword === '');
-    if (!starboardVideo || !starboardVideo.video_url) throw Error('Missing profile video URL in videos.csv');
-    $('starboard').addEventListener('click', () => window.open(starboardVideo.video_url, '_blank', 'noopener,noreferrer'));
+    $('starboard').addEventListener('click', () => window.open('https://youtu.be/mS9qQByGAWE?si=cqDjgb7t6tDbiFTW', '_blank', 'noopener,noreferrer'));
     renderStaticLabels();
     installWorldPages();
     initReports();
