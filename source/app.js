@@ -622,7 +622,9 @@
     window.addEventListener('resize', fit);
     $('brand').addEventListener('click', () => navigate(0));
     document.querySelectorAll('.top-nav button').forEach(b => b.addEventListener('click', () => navigate(ORDER.indexOf(b.dataset.target))));
-    $('starboard').addEventListener('click', () => window.open('https://youtu.be/mS9qQByGAWE?si=cqDjgb7t6tDbiFTW', '_blank', 'noopener,noreferrer'));
+    const starboardVideo = M.videos.find(video => video.page === 'profile' && video.keyword === '');
+    if (!starboardVideo || !starboardVideo.video_url) throw Error('Missing profile video URL in videos.csv');
+    $('starboard').addEventListener('click', () => window.open(starboardVideo.video_url, '_blank', 'noopener,noreferrer'));
     renderStaticLabels();
     installWorldPages();
     initReports();
