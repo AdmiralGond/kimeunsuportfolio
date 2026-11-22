@@ -1,14 +1,10 @@
 ﻿id,text
 6001_title,미사일 RTS 프로젝트
 6001_keyword,프로젝트 개요
-60101,v2026.11.18.3 - 클로드 기본 UI미교체
-60102,[MISSILE DEFENSE ROGUELITE](https://admiralgond.github.io/ZeroShingoNoTsukigasa/)
+60101,v2026.11.18.3 - 클로드 기본 UI미교체<br>[MISSILE DEFENSE ROGUELITE](https://admiralgond.github.io/ZeroShingoNoTsukigasa/)
 6002_keyword,프로젝트 문서
-60201,미사일 RTS 프로젝트 - 제로 신호의 츠키가사 [현재 개발 진행 중]
-60202,[미사일 RTS 프로젝트 - 개요](https://app.notion.com/p/400dab2edfee80db8687e76eb7e90eae)
-60203,"시간 단위의 수 싸움, 그것이 이 프로젝트가 목표하는 경험"
+60201,"미사일 RTS 프로젝트 - 제로 신호의 츠키가사 [현재 개발 진행 중]<br>[미사일 RTS 프로젝트 - 개요](https://app.notion.com/p/400dab2edfee80db8687e76eb7e90eae)<br>시간 단위의 수 싸움, 그것이 이 프로젝트가 목표하는 경험"
 6003_keyword,프로젝트 문제 해결
-60301,[미사일 RTS 프로젝트 : 문제 해결](https://app.notion.com/p/400dab2edfee80549af9ecee402c2af2)
-60302,무직경험  ~경험이 전달되지 않으면 해결하기 위해 최선을 다한다.~
+60301,[미사일 RTS 프로젝트 : 문제 해결](https://app.notion.com/p/400dab2edfee80549af9ecee402c2af2)<br>무직경험  ~경험이 전달되지 않으면 해결하기 위해 최선을 다한다.~
 6004_keyword,초심자와 숙련자 차이
 60401,초심자는 가장 가까워 보이는 위협에 반응하며 모든 행동을 의식적으로 처리한다.<br>하지만 숙련될수록 버튼을 누르는 행동에 의식하지 않고 무의식적으로 처리하며<br>그만큼 의식은 현재 상황보다 몇 초 뒤의 교전 상황을 더 많이 본다.

@@ -12,26 +12,25 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Publish v0.10.4
+      - name: Check CSV build
+        run: python source/build.py check
+      - name: Publish v0.10.5
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.4.zip" "$GITHUB_SHA" -- README.md index.html resource source
-          cat > "$RUNNER_TEMP/v0.10.4-notes.md" <<'EOF'
-          - 문자열 CSV 9개 파일명에 페이지 순번 1~9 적용
-          - 페이지별 문자열 참조를 CSV 순서에 맞춰 통합
-          - 빌드 단계의 파일명 검증과 README 파일명 규칙 수정
-          - 미사용 중복 문구 삭제 및 하나의 본문에 속하는 문자열 ID 통합
-          - 공용 UI·제원 항목명·표 셀 문구를 문자열 CSV로 이관
-          - 이미지·영상·표를 키워드 및 셀 문자열 ID로 연결
-          - 모든 CSV를 UTF-8 BOM 형식으로 통일
+          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.5.zip" "$GITHUB_SHA" -- README.md index.html resource source
+          cat > "$RUNNER_TEMP/v0.10.5-notes.md" <<'EOF'
+          - v0.10.4 첫 번째 수정본 기준 문자열 CSV 구조 정리
+          - 제목·표·본문 역할 구분, 키워드당 단일 본문 문자열
+          - 사용 중인 4개 표를 페이지·키워드별 CSV로 분리
+          - 사용자 표시 문구의 페이지별 CSV 참조와 README 사용 지침
+          - CSV UTF-8 BOM 인코딩 및 빌드 일치 검사
           EOF
-          if ! gh release view v0.10.4 >/dev/null 2>&1; then
-            gh release create v0.10.4 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.4' --notes-file "$RUNNER_TEMP/v0.10.4-notes.md"
+          if ! gh release view v0.10.5 >/dev/null 2>&1; then
+            gh release create v0.10.5 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.5' --notes-file "$RUNNER_TEMP/v0.10.5-notes.md"
           else
-            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.10.4" -f sha="$GITHUB_SHA" -F force=true >/dev/null
-            gh release edit v0.10.4 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.4-notes.md"
+            gh release edit v0.10.5 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.5-notes.md"
           fi
-          gh release upload v0.10.4 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.4.zip" --clobber
+          gh release upload v0.10.5 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.5.zip" --clobber

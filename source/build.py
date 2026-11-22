@@ -41,7 +41,6 @@ def manifest():
     if page_files != set(string_files):
         raise ValueError(f'페이지 문자열 파일명이 잘못되었습니다. 누락: {sorted(set(string_files) - page_files)}, 불일치: {sorted(page_files - set(string_files))}')
     page_strings = {name: strings(STRINGS / name) for name in string_files}
-    ui = dict(strings(STRINGS / 'common.csv'))
     indexed = {page['page']: dict(page_strings[file]) for page, file in zip(pages, string_files)}
     keyword_ids = {page: {key for key in values if key.endswith('_keyword')} for page, values in indexed.items()}
     visual = {row['rule']: row['value'] for row in records(RULES / 'visual.csv')}
@@ -59,31 +58,61 @@ def manifest():
                 raise ValueError(f'이미지 파일을 찾을 수 없습니다: {path}')
         if row['page'] != 'profile':
             if len(paths) != 2:
-                raise ValueError(f"{row['page']} {row['keyword_id']}: 이미지가 2개 필요합니다.")
-            media.append({'page': row['page'], 'keyword': keyword(row['page'], row['keyword_id']), 'paths': paths})
+                raise ValueError(f"{row['page']} {row['keyword']}: 이미지가 2개 필요합니다.")
+            if row['keyword'] not in indexed[row['page']].values():
+                raise ValueError(f"{row['page']}: 키워드가 없습니다: {row['keyword']}")
+            media.append({'page': row['page'], 'keyword': row['keyword'], 'paths': paths})
 
     tables = {}
-    for row in records(RULES / 'tables.csv'):
-        page = row['page']
-        cells = json.loads(row['cell_ids_json'])
-        if not cells or any(len(r) != len(cells[0]) for r in cells):
-            raise ValueError(f"{row['table_id']}: 표의 행·열 구성이 잘못되었습니다.")
-        try:
-            resolved = [[indexed[page][cell_id] for cell_id in r] for r in cells]
-        except KeyError as exc:
-            raise ValueError(f"{row['table_id']}: 표 셀 문자열 ID를 찾을 수 없습니다: {exc}") from exc
-        tables[row['table_id']] = {
-            'page': page,
-            'keyword': keyword(page, row['keyword_id']),
-            'rows': resolved,
-            'widths': [float(value) for value in row['col_widths_px'].split('|') if value],
-            'insertAfter': int(row['insert_after_paragraph']) if row['insert_after_paragraph'] else None,
-        }
+    referenced_table_paths = set()
+    for page, file in zip(pages, string_files):
+        page_id = page['page']
+        keyword_id = None
+        body_count = 0
+        for string_id, text in page_strings[file]:
+            if string_id.endswith('_title'):
+                continue
+            if string_id.endswith('_keyword'):
+                keyword_id = string_id
+                body_count = 0
+                continue
+            if not keyword_id:
+                continue
+            if string_id.endswith('_table'):
+                expected_id = keyword_id.replace('_keyword', '_table')
+                if string_id != expected_id:
+                    raise ValueError(f'{page_id}: 표 부모 ID가 다릅니다: {string_id}')
+                if not re.fullmatch(r'table_[a-z]+_[0-9]+_keyword\.csv', text):
+                    raise ValueError(f'{string_id}: 표 파일명이 잘못되었습니다: {text}')
+                expected_filename = f'table_{page_id}_{keyword_id}.csv'
+                if text != expected_filename:
+                    raise ValueError(f'{string_id}: 표 파일명은 {expected_filename}이어야 합니다.')
+                path = RULES / text
+                if not path.is_file() or text in referenced_table_paths:
+                    raise ValueError(f'{string_id}: 표가 없거나 중복 참조되었습니다: {text}')
+                referenced_table_paths.add(text)
+                table_rows = records(path)
+                if len(table_rows) != 1:
+                    raise ValueError(f'{text}: 표 데이터는 정확히 한 행이어야 합니다.')
+                row = table_rows[0]
+                cells = json.loads(row['rows_json'])
+                if not cells or any(len(r) != len(cells[0]) for r in cells):
+                    raise ValueError(f'{text}: 표 행·열 구성이 잘못되었습니다.')
+                tables[text] = {
+                    'id': row['table_id'], 'page': page_id,
+                    'rows': cells,
+                    'widths': [float(n) for n in row['col_widths_px'].split('|') if n],
+                    'insertAfter': int(row['insert_after_paragraph']) if row['insert_after_paragraph'] else None,
+                }
+                continue
+            body_count += 1
+            if body_count > 1:
+                raise ValueError(f'{page_id}/{keyword_id}: 하나의 키워드에 본문 ID가 여러 개입니다.')
+    stored_tables = {p.name for p in RULES.glob('table_*.csv')}
+    if stored_tables != referenced_table_paths:
+        raise ValueError(f'미사용 또는 누락된 표 CSV: {sorted(stored_tables ^ referenced_table_paths)}')
 
-    videos = [
-        {'page': row['page'], 'keyword': keyword(row['page'], row['keyword_id']), 'video_url': row['video_url']}
-        for row in records(RULES / 'videos.csv')
-    ]
+    videos = records(RULES / 'videos.csv')
     tools = []
     for row in records(RULES / 'profile_tools.csv'):
         if row['tooltip_id'] not in indexed['profile']:
@@ -106,7 +135,6 @@ def manifest():
         'cameraScale': float(visual['ship_scale']),
         'stringFiles': string_files,
         'strings': page_strings,
-        'ui': ui,
         'media': media,
         'tables': tables,
         'videos': videos,
@@ -150,8 +178,9 @@ def run(command, dry_run):
     data = manifest()
     generated = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
     new_source = replace_once(source, DATA_BLOCK, generated, 'portfolio-data')
-    new_source = replace_once(new_source, TITLE_BLOCK, data['ui']['document_title'], 'title')
-    new_source = replace_once(new_source, DESCRIPTION_BLOCK, data['ui']['document_description'], 'description')
+    profile = dict(data['strings']['string_profile_1.csv'])
+    new_source = replace_once(new_source, TITLE_BLOCK, profile['1050'], 'title')
+    new_source = replace_once(new_source, DESCRIPTION_BLOCK, profile['1001'], 'description')
     new_source = update_profile_photos(new_source)
     differs = source != new_source
     if command == 'check':

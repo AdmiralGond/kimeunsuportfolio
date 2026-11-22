@@ -21,10 +21,38 @@ python source/build.py build
 
 `source/build.py`는 표기·구조를 새로 설계하지 않고 CSV의 현재 값과 순서를 옮깁니다. 페이지 코드·좌표·이미지 파일명·문장은 기존 규칙을 유지하며 작업합니다.
 
-## 문자열 ID와 표 관리
+## 문자열 CSV 관리
 
-`source/strings/common.csv`에는 공통 프레임, 보고서 기본 안내, 프로필 제원 항목명, 이미지 확대 버튼 등 공용 UI 문구를 저장합니다. 페이지별 CSV에는 키워드·본문·링크·캡션을 저장합니다. 동일한 본문의 여러 줄은 하나의 ID에 `<br>`로 연결합니다. 다른 이미지의 캡션이나 독립된 링크는 고유 ID를 사용합니다.
+표시할 텍스트는 페이지별 `string_{page}_{order}.csv` 9개에서 관리합니다. 별도의 `common.csv`를 사용하지 않습니다.
 
-`source/rules/keyword_media.csv`와 `source/rules/videos.csv`의 `keyword_id`는 각 페이지 문자열 CSV의 `_keyword` ID를 참조합니다. `source/rules/tables.csv`는 `cell_ids_json` 배열에 표 셀 문자열 ID를 저장합니다. 표에 표시될 문구는 해당 페이지 문자열 CSV의 `_cell_` ID에서 가져옵니다. 규칙 CSV를 수정할 때 표의 실제 문구를 중복 입력하지 않습니다.
+- 열 형식은 `id,text`입니다. CSV의 문자 인코딩은 **UTF-8 BOM**이며 Excel에서 열었을 때 한글과 일본어가 깨지지 않도록 합니다.
+- 페이지 제목은 `_title`, 키워드 제목은 `_keyword` ID를 사용합니다.
+- 하나의 키워드에는 본문 ID를 최대 하나만 사용합니다. 본문에는 설명·인용·링크·사진 설명 등 표 이외의 내용을 순서대로 포함하며 줄바꿈은 `<br>`로 표시합니다.
+- 표가 있는 키워드에는 `_table` 부모 ID를 두고 값으로 표 CSV 파일명을 지정합니다. `_table`은 화면에 표시할 문장이 아닙니다.
+- 본문이 없는 B2 `인간 튜토리얼`과 D1 `AI 워크 플로우`는 기존 안내문을 표시합니다.
+- 프로필의 이름·학교·학과·학점·연락처는 개별 정보 필드 ID로 유지합니다.
+- 모든 화면 표시 문구는 문자열 ID로 참조합니다. HTML·JavaScript에서 직접 관리하지 않습니다.
+- ID를 재사용하거나 배열 위치에 의존해 값을 읽지 않습니다. 원본 문구는 별도의 요청 없이 수정하지 않습니다.
 
-모든 CSV는 **UTF-8 BOM**으로 저장합니다. Windows Excel에서 열어도 한글이 깨지지 않도록 하기 위한 인코딩입니다. Python에서는 `utf-8-sig`로 읽고 씁니다. CSV에서 표시 문구나 문자열 ID를 수정한 뒤 `python source/build.py build`와 `python source/build.py check`를 실행합니다.
+## 표 CSV 관리
+
+사용 중인 표 네 개는 `source/rules` 폴더의 `table_{page}_{keyword_id}.csv`로 각각 관리합니다.
+
+| 키워드 부모 ID | 파일명 |
+| --- | --- |
+| `4001_table` | `table_play_4001_keyword.csv` |
+| `4002_table` | `table_play_4002_keyword.csv` |
+| `4004_table` | `table_play_4004_keyword.csv` |
+| `7002_table` | `table_tamagotchi_7002_keyword.csv` |
+
+각 표 CSV는 `table_id,rows_json,col_widths_px,insert_after_paragraph` 형식으로 정확히 한 행을 관리합니다. `rows_json`에 표의 셀 텍스트·링크·행·열을 그대로 기록하고, 표 셀마다 별도의 문자열 ID를 만들지 않습니다. 표는 해당 키워드의 본문보다 먼저 표시합니다.
+
+이전에 존재하던 통합 `tables.csv`와 렌더링에 쓰이지 않던 프로필 표 기록은 사용하지 않습니다.
+
+## 실행 데이터와 검증
+
+- CSV를 수정하면 `python source/build.py build`로 `index.html`에 포함된 실행 데이터를 갱신합니다.
+- `python source/build.py check`로 실행 데이터가 원본 CSV와 일치하는지 검증합니다.
+- 빌드 검사는 본문 ID 중복, 표 부모 ID 중복·누락, 존재하지 않는 표 파일 및 미사용 표 파일을 오류로 처리합니다.
+- 외부 CSV의 `fetch()` 없이 HTML 안의 실행 데이터를 사용하므로 `index.html`을 직접 더블클릭해 실행할 수 있습니다.
+- 기존 v0.10.4는 보존하고, 수정 결과물은 v0.10.5로 구분합니다.

@@ -3,8 +3,50 @@
     const M = JSON.parse(document.getElementById('portfolio-data').textContent);
     const $ = id => document.getElementById(id);
     const ORDER = M.pages, CODES = M.pageCodes, SCALE = M.cameraScale || 9.2, VX = 952.5, VY = 455.5;
-    const UI = M.ui;
     const pageStrings = Object.fromEntries(ORDER.map((name, i) => [name, M.strings[M.stringFiles[i]]]));
+    const profileById = new Map(pageStrings.profile);
+    const getText = (page, id) => {
+        const value = (page === 'profile' ? profileById : new Map(pageStrings[page])).get(id);
+        if (value === undefined) throw Error(`Missing string ID ${page}/${id}`);
+        return value;
+    };
+    const UI = {
+        brand: getText('profile', '1023'),
+        nav_profile: getText('profile', '1024'),
+        nav_rts: getText('profile', '1025'),
+        arsenal: getText('profile', '1026'),
+        profile_heading: getText('profile', '1027'),
+        profile_name: getText('profile', '1028'),
+        profile_birthday: getText('profile', '1029'),
+        profile_school: getText('profile', '1030'),
+        profile_grades: getText('profile', '1031'),
+        profile_phone: getText('profile', '1032'),
+        profile_email: getText('profile', '1033'),
+        panel_1: getText('profile', '1034'),
+        panel_2: getText('profile', '1035'),
+        panel_3: getText('profile', '1036'),
+        panel_4: getText('profile', '1037'),
+        profile_tools_aria: getText('profile', '1038'),
+        top_nav_aria: getText('profile', '1039'),
+        scroll_aria: getText('profile', '1040'),
+        scroll_guide: getText('profile', '1041'),
+        starboard: getText('profile', '1042'),
+        report_title: getText('profile', '1043'),
+        report_prefix: getText('profile', '1044'),
+        guide: getText('profile', '1045'),
+        lightbox_open: getText('profile', '1046'),
+        lightbox_close: getText('profile', '1047'),
+        lightbox_previous: getText('profile', '1048'),
+        lightbox_next: getText('profile', '1049'),
+        document_title: getText('profile', '1050'),
+        lightbox_close_symbol: getText('profile', '1051'),
+        lightbox_prev_symbol: getText('profile', '1052'),
+        lightbox_next_symbol: getText('profile', '1053'),
+        school_join: getText('profile', '1054'),
+        number_join: getText('profile', '1055'),
+        nav_join: getText('profile', '1056'),
+        nav_marker: getText('profile', '1057')
+    };
     const GUIDE = UI.guide;
     const pageTitles = Object.fromEntries(ORDER.slice(1).map(name => [name, pageStrings[name].find(([id]) => id.endsWith('_title'))[1]]));
     const NAV = [[UI.nav_profile, 0], [pageTitles.intro, 1], [pageTitles.develop, 2], [pageTitles.play, 3], [pageTitles.observe, 4], [UI.nav_rts, 5], [pageTitles.documents, 7], [pageTitles.history, 8]];
@@ -29,15 +71,17 @@
         let current = null;
         rows.forEach(([id, text]) => {
             if (id.endsWith('_keyword')) {
-                current = { title: text, body: [] };
+                current = { title: text, body: [], table: null };
                 groups.push(current);
-            } else if (current && !id.includes('_cell_')) {
+            } else if (current && id.endsWith('_table')) {
+                current.table = text;
+            } else if (current && !id.endsWith('_title')) {
                 current.body.push(text);
             }
         });
         content[name] = { rows, groups };
     });
-    const profileStrings = new Map(content.profile.rows);
+    const profileStrings = profileById;
     const media = new Map(M.media.map(item => [item.page + '|' + item.keyword, item.paths]));
     const state = {
         index: 0,
@@ -85,13 +129,13 @@
         const cols = total ? '<colgroup>' + widths.map(n => '<col style="width:' + (n / total * 100).toFixed(5) + '%">').join('') + '</colgroup>' : '';
         return '<table data-table="' + escapeHTML(id) + '">' + cols + table.rows.map((r, i) => '<tr>' + r.map(v => '<' + (i ? 'td' : 'th') + '>' + rich(v) + '</' + (i ? 'td' : 'th') + '>').join('') + '</tr>').join('') + '</table>';
     }
-    function reportAttachments(name, title) {
+    function reportAttachments(name, group) {
         let insert = null;
         let append = '';
-        for (const [id, table] of Object.entries(M.tables)) {
-            if (table.page !== name || table.keyword !== title)
-                continue;
-            const html = tableHTML(table, id);
+        if (group.table) {
+            const table = M.tables[group.table];
+            if (!table || table.page !== name) throw Error(`Missing table ${name}/${group.table}`);
+            const html = tableHTML(table, table.id);
             if (Number.isInteger(table.insertAfter)) {
                 insert = { after: table.insertAfter, html };
             } else {
@@ -99,7 +143,7 @@
             }
         }
         for (const video of M.videos) {
-            if (video.page !== name || video.keyword !== title)
+            if (video.page !== name || video.keyword !== group.title)
                 continue;
             const url = escapeHTML(video.video_url);
             append += '<p><a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a></p>';
@@ -228,7 +272,7 @@
         const updateSelection = () => {
             const chosen = gallery[selected];
             picture.src = chosen.currentSrc || chosen.src;
-            counter.textContent = (selected + 1) + ' / ' + gallery.length;
+            counter.textContent = (selected + 1) + UI.number_join + gallery.length;
             prevButton.hidden = gallery.length < 2;
             nextButton.hidden = gallery.length < 2;
             return destination(chosen);
@@ -337,7 +381,7 @@
         page.querySelector('.report-label').textContent = UI.report_prefix + group.title;
         page.querySelectorAll('.keyword-row button').forEach((b, j) => b.classList.toggle('active', j === index));
         showMedia(page, name, group.title);
-        const attachments = reportAttachments(name, group.title);
+        const attachments = reportAttachments(name, group);
         writeText(page, group.body, clicked, attachments.append, attachments.insert);
     }
     function initReports() {
@@ -387,7 +431,7 @@
             fill.style.width = (100 * tool.score / tool.maximum) + '%';
             const numbers = document.createElement('span');
             numbers.className = 'profile-skill-value';
-            numbers.textContent = tool.score + ' / ' + tool.maximum;
+            numbers.textContent = tool.score + UI.number_join + tool.maximum;
             const tip = document.createElement('span');
             tip.className = 'profile-skill-tooltip';
             const tipText = byId.get(String(tool.tooltip_id));
@@ -415,7 +459,7 @@
         $('hero-first').textContent = profileStrings.get('1001');
         $('hero-second').textContent = profileStrings.get('1002');
         $('quote-profile').innerHTML = '<div>' + rich(q[0]) + '</div><div>' + rich(q[1] || '') + '</div><div class="credit">' + rich(q.slice(2).join('<br>')) + '</div>';
-        const fields = [[UI.profile_name, profileStrings.get('1004')], [UI.profile_birthday, profileStrings.get('1005')], [UI.profile_school, profileStrings.get('1006')], [UI.profile_grades, profileStrings.get('1008')], [UI.profile_phone, profileStrings.get('1009')], [UI.profile_email, profileStrings.get('1010')]];
+        const fields = [[UI.profile_name, getText('profile','1004')], [UI.profile_birthday, getText('profile','1005')], [UI.profile_school, getText('profile','1006') + UI.school_join + getText('profile','1007')], [UI.profile_grades, getText('profile','1008')], [UI.profile_phone, getText('profile','1009')], [UI.profile_email, getText('profile','1010')]];
         $('identity-cells').innerHTML = fields.map(([k, v]) => '<div class="row"><span class="key">' + escapeHTML(k) + '</span><span class="value">' + rich(v) + '</span></div>').join('');
         $('profile-image-caption').textContent = profileStrings.get('1011');
         $('profile-tools-caption').textContent = profileStrings.get('1022');
@@ -521,7 +565,7 @@
             const button = document.createElement('button');
             button.type = 'button';
             button.dataset.page = String(i);
-            button.textContent = CODES[i] + ' - ' + label;
+            button.textContent = CODES[i] + UI.nav_join + label;
             button.dataset.activeMarker = UI.nav_marker;
             button.addEventListener('click', () => navigate(i));
             list.appendChild(button);

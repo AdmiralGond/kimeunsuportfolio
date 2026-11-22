@@ -1,32 +1,32 @@
-﻿page,keyword_id,left_image,right_image
-intro,2001_keyword,resource/images/intro/Image_A2_01.png,resource/images/intro/Image_A2_05.png
-intro,2002_keyword,resource/images/intro/Image_A2_02.png,resource/images/intro/Image_A2_06.png
-intro,2003_keyword,resource/images/intro/Image_A2_03.png,resource/images/intro/Image_A2_07.png
-intro,2004_keyword,resource/images/intro/Image_A2_04.png,resource/images/intro/Image_A2_08.png
-develop,3001_keyword,resource/images/develop/Image_B1_01.png,resource/images/develop/Image_B1_05.png
-develop,3002_keyword,resource/images/develop/Image_B1_02.png,resource/images/develop/Image_B1_06.png
-develop,3003_keyword,resource/images/develop/Image_B1_03.png,resource/images/develop/Image_B1_07.png
-develop,3004_keyword,resource/images/develop/Image_B1_04.png,resource/images/develop/Image_B1_08.png
-play,4001_keyword,resource/images/play/Image_B2_01.png,resource/images/play/Image_B2_05.png
-play,4002_keyword,resource/images/play/Image_B2_02.png,resource/images/play/Image_B2_06.png
-play,4003_keyword,resource/images/play/Image_B2_03.png,resource/images/play/Image_B2_07.png
-play,4004_keyword,resource/images/play/Image_B2_04.png,resource/images/play/Image_B2_08.png
-observe,5001_keyword,resource/images/observe/Image_B3_01.png,resource/images/observe/Image_B3_03.png
-observe,5002_keyword,resource/images/observe/Image_B3_02.png,resource/images/observe/Image_B3_04.png
-tamagotchi,7001_keyword,resource/images/tamagotchi/Image_C1_05.png,resource/images/tamagotchi/Image_C1_09.png
-tamagotchi,7002_keyword,resource/images/tamagotchi/Image_C1_06.png,resource/images/tamagotchi/Image_C1_10.png
-tamagotchi,7003_keyword,resource/images/tamagotchi/Image_C1_07.png,resource/images/tamagotchi/Image_C1_11.png
-tamagotchi,7004_keyword,resource/images/tamagotchi/Image_C1_08.png,resource/images/tamagotchi/Image_C1_12.png
-documents,8001_keyword,resource/images/documents/Image_C2_01.png,resource/images/documents/Image_C2_05.png
-documents,8002_keyword,resource/images/documents/Image_C2_02.png,resource/images/documents/Image_C2_06.png
-documents,8003_keyword,resource/images/documents/Image_C2_03.png,resource/images/documents/Image_C2_07.png
-documents,8004_keyword,resource/images/documents/Image_C2_04.png,resource/images/documents/Image_C2_08.png
+﻿page,keyword,left_image,right_image
+intro,게임 디자이너로서 나,resource/images/intro/Image_A2_01.png,resource/images/intro/Image_A2_05.png
+intro,현재 하고 있는 것,resource/images/intro/Image_A2_02.png,resource/images/intro/Image_A2_06.png
+intro,그동안 해온 것,resource/images/intro/Image_A2_03.png,resource/images/intro/Image_A2_07.png
+intro,오타쿠로서 나,resource/images/intro/Image_A2_04.png,resource/images/intro/Image_A2_08.png
+develop,프로젝트 사진,resource/images/develop/Image_B1_01.png,resource/images/develop/Image_B1_05.png
+develop,게임의 가치와 방향,resource/images/develop/Image_B1_02.png,resource/images/develop/Image_B1_06.png
+develop,제공하고자 하는 경험,resource/images/develop/Image_B1_03.png,resource/images/develop/Image_B1_07.png
+develop,플레이 경험을 반영,resource/images/develop/Image_B1_04.png,resource/images/develop/Image_B1_08.png
+play,밀리터리 게임 경험,resource/images/play/Image_B2_01.png,resource/images/play/Image_B2_05.png
+play,서브컬처 게임 경험,resource/images/play/Image_B2_02.png,resource/images/play/Image_B2_06.png
+play,인간 튜토리얼,resource/images/play/Image_B2_03.png,resource/images/play/Image_B2_07.png
+play,나에게 서브컬처란,resource/images/play/Image_B2_04.png,resource/images/play/Image_B2_08.png
+observe,활용 방식 ①,resource/images/observe/Image_B3_01.png,resource/images/observe/Image_B3_03.png
+observe,활용 방식 ②,resource/images/observe/Image_B3_02.png,resource/images/observe/Image_B3_04.png
+tamagotchi,터치의 의미와 구상,resource/images/tamagotchi/Image_C1_05.png,resource/images/tamagotchi/Image_C1_09.png
+tamagotchi,애정도 파라미터 분해,resource/images/tamagotchi/Image_C1_06.png,resource/images/tamagotchi/Image_C1_10.png
+tamagotchi,목표 플레이 경험,resource/images/tamagotchi/Image_C1_07.png,resource/images/tamagotchi/Image_C1_11.png
+tamagotchi,다마고치 - 계획 단계,resource/images/tamagotchi/Image_C1_08.png,resource/images/tamagotchi/Image_C1_12.png
+documents,문서 작성 이력,resource/images/documents/Image_C2_01.png,resource/images/documents/Image_C2_05.png
+documents,문서의 접근 관점,resource/images/documents/Image_C2_02.png,resource/images/documents/Image_C2_06.png
+documents,프롤로그,resource/images/documents/Image_C2_03.png,resource/images/documents/Image_C2_07.png
+documents,기여하고 싶습니다.,resource/images/documents/Image_C2_04.png,resource/images/documents/Image_C2_08.png
 profile,,resource/images/profile/Image_A1_01.png,
 profile,,resource/images/profile/Image_A1_02.png,
 profile,,resource/images/profile/Image_A1_03.png,
-rts,6001_keyword,resource/images/rts/Image_C4_04.png,resource/images/rts/Image_C4_08.png
-rts,6002_keyword,resource/images/rts/Image_C3_03.png,resource/images/rts/Image_C3_07.png
-rts,6003_keyword,resource/images/rts/Image_C2_02.png,resource/images/rts/Image_C2_06.png
-rts,6004_keyword,resource/images/rts/Image_C1_01.png,resource/images/rts/Image_C1_05.png
-history,9001_keyword,resource/images/history/Image_D1_01.png,resource/images/history/Image_D1_03.png
-history,9002_keyword,resource/images/history/Image_D1_02.png,resource/images/history/Image_D1_04.png
+rts,프로젝트 개요,resource/images/rts/Image_C4_04.png,resource/images/rts/Image_C4_08.png
+rts,프로젝트 문서,resource/images/rts/Image_C3_03.png,resource/images/rts/Image_C3_07.png
+rts,프로젝트 문제 해결,resource/images/rts/Image_C2_02.png,resource/images/rts/Image_C2_06.png
+rts,초심자와 숙련자 차이,resource/images/rts/Image_C1_01.png,resource/images/rts/Image_C1_05.png
+history,AI 워크 플로우,resource/images/history/Image_D1_01.png,resource/images/history/Image_D1_03.png
+history,플레이 이력,resource/images/history/Image_D1_02.png,resource/images/history/Image_D1_04.png

@@ -1,10 +1,7 @@
 ﻿id,text
 3001_title,"게임을 개발하고,"
 3001_keyword,프로젝트 사진
-30101,미사일 RTS 게임 프로젝트<br>Project Name : 제로 신호의 츠키가사<br>ゼロ信号のつきがさ<br>Zero Shingō no Tsukigasa
-30103,[MISSILE DEFENSE ROGUELITE](https://admiralgond.github.io/ZeroShingoNoTsukigasa/)
-30104,개발 중인 게임 화면 ▶<br>문서는 하단에 있습니다.
-30105,v2026.11.18.3 - 클로드 기본 UI미교체
+30101,미사일 RTS 게임 프로젝트<br>Project Name : 제로 신호의 츠키가사<br>ゼロ信号のつきがさ<br>Zero Shingō no Tsukigasa<br>[MISSILE DEFENSE ROGUELITE](https://admiralgond.github.io/ZeroShingoNoTsukigasa/)<br>개발 중인 게임 화면 ▶<br>문서는 하단에 있습니다.<br>v2026.11.18.3 - 클로드 기본 UI미교체
 3002_keyword,게임의 가치와 방향
 30201,"밀리터리 덕후가 군함에 가진 판타지를 게임으로 경험시킨다.<br>밀리터리 덕후가 원하는 것은 자신의 판단으로 전투의 승패를 가르는 지휘관의 경험.<br>저는 게임이 현실에서 체험하기 어려운 경험과 판타지를 대리 만족해주는 수단이라고 생각합니다.<br>현대 미사일 군함의 전투의 경우 밀리터리 덕후에게 매력적인 소재이지만,<br>현실에서 직접 경험하기는 어렵습니다.<br>이에 군함에서 가장 위험한 적을 식별하고 요격하기까지의 판단 과정을 전략 게임의 경험으로 치환하여,<br>밀리터리 덕후가 현대 해전에 가진 판타지를 제공하는 게임을 개발하고 있습니다."
 3003_keyword,제공하고자 하는 경험
