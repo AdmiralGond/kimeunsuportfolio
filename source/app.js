@@ -1,6 +1,117 @@
-(() => {
+(async () => {
     'use strict';
-    const M = JSON.parse(document.getElementById('portfolio-data').textContent);
+    // GitHub Pages reads deployed CSV directly; the locally built HTML uses Python's embedded manifest.
+    function parseCSV(csvText) {
+        const input = String(csvText).replace(/^\uFEFF/, '');
+        const rows = [];
+        let row = [], cell = '', quoted = false;
+        for (let i = 0; i < input.length; i++) {
+            const char = input[i];
+            if (quoted) {
+                if (char === '"' && input[i + 1] === '"') { cell += '"'; i++; }
+                else if (char === '"') quoted = false;
+                else cell += char;
+            } else if (char === '"') {
+                if (cell !== '') throw Error('잘못된 CSV 인용부호');
+                quoted = true;
+            } else if (char === ',') {
+                row.push(cell); cell = '';
+            } else if (char === '\n') {
+                row.push(cell); rows.push(row); row = []; cell = '';
+            } else if (char !== '\r') {
+                cell += char;
+            }
+        }
+        if (quoted) throw Error('닫히지 않은 CSV 인용부호');
+        if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+        return rows.filter(fields => fields.some(value => value !== ''));
+    }
+    function csvObjects(text, expectedColumns, path) {
+        const [columns, ...rows] = parseCSV(text);
+        if (!columns || columns.join(',') !== expectedColumns.join(',')) {
+            throw Error(`CSV 열이 잘못되었습니다: ${path}`);
+        }
+        return rows.map(fields => {
+            if (fields.length !== columns.length) throw Error(`CSV 열 개수 오류: ${path}`);
+            return Object.fromEntries(columns.map((name, i) => [name, fields[i]]));
+        });
+    }
+    async function createCSVReader() {
+        const root = new URL('.', document.baseURI);
+        document.documentElement.dataset.csvSource = 'site';
+        return async path => {
+            const response = await fetch(new URL(path, root), { cache: 'no-cache' });
+            if (!response.ok) throw Error(`CSV 요청 실패: ${path} (HTTP ${response.status})`);
+            return response.text();
+        };
+    }
+    async function loadManifest() {
+        const read = await createCSVReader();
+        const get = (path, columns) => read(path).then(text => csvObjects(text, columns, path));
+        const [pagesRaw, visualRows, mediaRows, videoRows, toolRows] = await Promise.all([
+            get('source/rules/pages.csv', ['page', 'page_number', 'order', 'ship_source_center_x', 'ship_source_center_y', 'ship_scale', 'world_anchor_type', 'guide_rect_x', 'guide_rect_y', 'guide_rect_width', 'guide_rect_height']),
+            get('source/rules/visual.csv', ['rule', 'value']),
+            get('source/rules/keyword_media.csv', ['page', 'keyword', 'left_image', 'right_image']),
+            get('source/rules/keyword_videos.csv', ['page', 'keyword', 'left_video_id', 'right_video_id']),
+            get('source/rules/profile_tools.csv', ['tool', 'panel', 'order', 'score', 'maximum', 'icon', 'tooltip_id', 'url'])
+        ]);
+        const pages = pagesRaw.sort((a, b) => Number(a.order) - Number(b.order));
+        if (pages.some((page, index) => Number(page.order) !== index)) throw Error('pages.csv 페이지 순서 오류');
+        const names = pages.map(page => page.page);
+        const stringFiles = pages.map((page, index) => `string_${page.page}_${index + 1}.csv`);
+        const allStringRows = await Promise.all(stringFiles.map(file => read(`source/strings/${file}`).then(text => {
+            const [columns, ...rows] = parseCSV(text);
+            if (!columns || columns.join(',') !== 'id,text') throw Error(`문자열 CSV 열 오류: ${file}`);
+            const ids = new Set();
+            for (const fields of rows) {
+                if (fields.length !== 2 || !fields[0] || ids.has(fields[0])) throw Error(`문자열 CSV ID 오류: ${file}`);
+                ids.add(fields[0]);
+            }
+            return rows;
+        })));
+        const strings = Object.fromEntries(stringFiles.map((file, i) => [file, allStringRows[i]]));
+        const indexed = Object.fromEntries(names.map((name, i) => [name, new Map(allStringRows[i])]));
+        const visual = Object.fromEntries(visualRows.map(row => [row.rule, row.value]));
+        const tableFiles = [...new Set(allStringRows.flatMap(rows => rows.filter(([id]) => id.endsWith('_table')).map(([, value]) => value)))];
+        const tableRows = await Promise.all(tableFiles.map(file => get(`source/rules/${file}`, ['table_id', 'rows_json', 'col_widths_px', 'insert_after_paragraph']).then(rows => {
+            if (rows.length !== 1) throw Error(`표 데이터 오류: ${file}`);
+            const item = rows[0];
+            return [file, {
+                id: item.table_id,
+                page: file.match(/^table_([^_]+)_/)?.[1],
+                rows: JSON.parse(item.rows_json),
+                widths: item.col_widths_px.split('|').filter(Boolean).map(Number),
+                insertAfter: item.insert_after_paragraph ? Number(item.insert_after_paragraph) : null
+            }];
+        })));
+        const profileImages = mediaRows.filter(row => row.page === 'profile').flatMap(row => [row.left_image, row.right_image].filter(Boolean));
+        const media = mediaRows.filter(row => row.page !== 'profile').map(row => ({page: row.page, keyword: row.keyword, paths: [row.left_image, row.right_image].filter(Boolean)}));
+        const videos = videoRows.map(row => ({page: row.page, keyword: row.keyword, ids: [row.left_video_id, row.right_video_id]}));
+        for (const entry of [...media, ...videos]) {
+            const keywords = [...indexed[entry.page]].filter(([id]) => id.endsWith('_keyword')).map(([, value]) => value);
+            if (!keywords.includes(entry.keyword)) throw Error(`이미지 또는 영상의 키워드 연결 오류: ${entry.page}/${entry.keyword}`);
+        }
+        return {
+            pages: names,
+            pageCodes: pages.map(page => page.page_number),
+            camera: pages.map(page => ({x: Number(page.ship_source_center_x), y: Number(page.ship_source_center_y)})),
+            cameraScale: Number(visual.ship_scale),
+            stringFiles,
+            strings,
+            media, videos,
+            tables: Object.fromEntries(tableRows),
+            transitionMs: Number(visual.camera_transition_ms),
+            profileImages,
+            profileTools: toolRows.map(row => ({
+                tool: row.tool, panel: Number(row.panel), order: Number(row.order), score: Number(row.score),
+                maximum: Number(row.maximum), icon: row.icon, tooltip_id: row.tooltip_id, url: row.url
+            }))
+        };
+    }
+    const M = location.protocol === 'file:'
+        ? JSON.parse(document.getElementById('portfolio-data').textContent)
+        : await loadManifest();
+    if (location.protocol === 'file:') document.documentElement.dataset.csvSource = 'built';
     const $ = id => document.getElementById(id);
     const ORDER = M.pages, CODES = M.pageCodes, SCALE = M.cameraScale || 9.2, VX = 952.5, VY = 455.5;
     const pageStrings = Object.fromEntries(ORDER.map((name, i) => [name, M.strings[M.stringFiles[i]]]));
@@ -473,6 +584,12 @@
         }
     }
     function renderProfile() {
+        const profilePhotoElements = $('profile-photos').querySelectorAll('img');
+        const profileImages = M.profileImages || Array.from(profilePhotoElements, img => img.getAttribute('src'));
+        if (profileImages.length !== profilePhotoElements.length) throw Error('프로필 이미지 개수 불일치');
+        profileImages.forEach((path, index) => { profilePhotoElements[index].src = path; });
+        document.title = getText('profile', '1050');
+        document.querySelector('meta[name="description"]').content = getText('profile', '1001');
         const q = profileStrings.get('1003').split(/<br\s*\/?\s*>/i);
         $('hero-first').textContent = profileStrings.get('1001');
         $('hero-second').textContent = profileStrings.get('1002');
@@ -651,4 +768,11 @@
     fit();
     world.style.transform = focus(0);
     activatePage(0);
-})();
+})().catch(error => {
+    console.error('CSV 기반 포트폴리오 초기화 실패:', error);
+    const message = document.createElement('div');
+    message.className = 'csv-load-failure';
+    message.setAttribute('role', 'alert');
+    message.textContent = 'CSV 데이터 로딩 실패: ' + error.message;
+    document.body.appendChild(message);
+});

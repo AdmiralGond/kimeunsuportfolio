@@ -139,3 +139,4 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 .image-viewer-close:hover,.image-viewer-arrow:hover{background:rgba(54,91,104,.9)}
 .image-viewer-count{left:50%;transform:translateX(-50%);text-align:center;white-space:nowrap;font-size:14px;font-weight:500}
 @media(prefers-reduced-motion:reduce){.image-viewer-control{transition:none}#image-viewer.is-ready .image-viewer-control{transition-delay:0ms}}
+.csv-load-failure{position:fixed;z-index:99999;left:50%;top:50%;transform:translate(-50%,-50%);max-width:min(92vw,540px);padding:24px 30px;background:#0d2343;color:#f3f0e9;border:1px solid #2ef3e9;font-family:inherit;font-size:16px;line-height:1.5;box-shadow:0 12px 32px #0008}

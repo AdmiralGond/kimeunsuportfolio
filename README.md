@@ -1,6 +1,6 @@
 # 포트폴리오 사이트
 
-실행 진입점은 `index.html`입니다. 브라우저에서 파일을 열거나 GitHub Pages에 배포할 수 있습니다. 빌드 과정에서 외부 CDN이나 JavaScript 프레임워크를 사용하지 않습니다.
+실행 진입점은 `index.html`입니다. GitHub Pages와 로컬 빌드본은 같은 파일을 서로 다른 데이터 로딩 방식으로 실행합니다. 외부 CDN 또는 JavaScript 프레임워크는 사용하지 않습니다.
 
 ## 콘텐츠와 규칙 수정
 
@@ -9,17 +9,17 @@
 - 화면 표현: `source/style.css`, 상호작용: `source/app.js`
 - 이미지·SVG·OTF: `resource/`
 
-`index.html`의 `portfolio-data`에는 브라우저가 직접 파일을 열어도 사용할 수 있도록 CSV 내용을 함께 저장합니다. **CSV가 원본이고, 내장 데이터는 생성 결과입니다.** CSV를 수정한 뒤 아래 명령을 실행해야 화면에 반영됩니다.
+CSV가 콘텐츠·규칙의 원본입니다. `index.html`은 실행 진입점이며 `source/build.py`로 빌드하면 로컬 실행을 위한 데이터 사본이 HTML의 `portfolio-data`에 생성됩니다.
+
+- **GitHub Pages (`https://admiralgond.github.io/kimeunsuportfolio/`)**: 브라우저가 같은 사이트의 `source/strings/*.csv`, `source/rules/*.csv` 파일을 **상대 경로**로 읽습니다. `portfolio-data` 내장 데이터는 사용하지 않습니다. CSV 변경을 GitHub Pages에 배포하면 HTML 재빌드 없이 이후 사이트 로딩에 반영됩니다.
+- **로컬 실행**: `python source/build.py build`를 실행해 CSV 데이터가 내장된 `index.html`을 갱신합니다. ZIP에 포함된 빌드본 `index.html`을 열면 내장 데이터를 사용하므로 폴더 선택·CSV의 `fetch()` 요청 없이 실행됩니다.
+- **검증**: `python source/build.py check`는 CSV와 빌드된 HTML이 일치하는지 확인하고, `python source/build.py build --dry-run`은 변경 필요 여부를 확인합니다.
 
 ```bash
 python source/build.py check
 python source/build.py build --dry-run
 python source/build.py build
 ```
-
-`check`는 현재 `index.html`과 CSV의 일치 여부를 확인합니다. `build --dry-run`은 파일 변경 없이 갱신 필요 여부를 출력합니다. `build`는 내장 데이터가 달라졌을 때만 `index.html`을 갱신합니다. 결과는 JSON으로 출력됩니다.
-
-`source/build.py`는 표기·구조를 새로 설계하지 않고 CSV의 현재 값과 순서를 옮깁니다. 페이지 코드·좌표·이미지 파일명·문장은 기존 규칙을 유지하며 작업합니다.
 
 ## 문자열 CSV 관리
 
@@ -54,11 +54,11 @@ python source/build.py build
 
 ## 실행 데이터와 검증
 
-- CSV를 수정하면 `python source/build.py build`로 `index.html`에 포함된 실행 데이터를 갱신합니다.
-- `python source/build.py check`로 실행 데이터가 원본 CSV와 일치하는지 검증합니다.
-- 빌드 검사는 본문 ID 중복, 표 부모 ID 중복·누락, 존재하지 않는 표 파일 및 미사용 표 파일을 오류로 처리합니다.
-- 외부 CSV의 `fetch()` 없이 HTML 안의 실행 데이터를 사용하므로 `index.html`을 직접 더블클릭해 실행할 수 있습니다.
-- 기존 버전은 보존하고, 수정 결과물은 v0.10.12 작업본으로 구분합니다.
+- 온라인 `https:` 접속은 CSV 19개를 직접 요청하여 화면 데이터를 구성합니다. `index.html`에 내장된 데이터 사본을 참조하지 않습니다.
+- 로컬 `file:` 실행은 `source/build.py build`로 갱신한 `portfolio-data`를 사용합니다. 압축 해제한 ZIP에는 이미 빌드된 `index.html`이 포함됩니다.
+- CSV 파서는 UTF-8 BOM, 따옴표 안의 쉼표·줄바꿈, 표 셀의 JSON을 처리합니다.
+- `source/build.py check`는 데이터 일치, 문자열 ID, 표·이미지·영상 연결을 검증합니다.
+- v0.10.12와 v0.10.13을 보존하며 이 변경본은 v0.11.0으로 관리합니다.
 
 ## 외부 영상 동작
 

@@ -14,22 +14,23 @@ jobs:
           fetch-depth: 0
       - name: Check CSV build
         run: python source/build.py check
-      - name: Publish v0.10.12
+      - name: Publish v0.11.0
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.12.zip" "$GITHUB_SHA" -- README.md index.html resource source
-          cat > "$RUNNER_TEMP/v0.10.12-notes.md" <<'EOF'
-          - D1 키워드 버튼 제목의 기존 두 줄 표시 유지
-          - D1 보고서 제목행 전용 9002_report_title 문자열 키 분리
-          - 보고서 제목행 한 줄 표시 및 기존 콘텐츠·영상·레이아웃 유지
+          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.11.0.zip" "$GITHUB_SHA" -- README.md index.html resource source
+          cat > "$RUNNER_TEMP/v0.11.0-notes.md" <<'EOF'
+          - GitHub Pages에서 동봉된 문자열·규칙·표 CSV 19개를 상대 경로로 직접 로딩
+          - 로컬 실행용 index.html은 기존 source/build.py로 CSV 빌드 데이터 생성
+          - build, check, --dry-run 명령 복구 및 CSV 변경 내용 빌드 반영
+          - D1 키워드·제목행 구분과 B1 유튜브 영상·기존 레이아웃 보존
           EOF
-          if ! gh release view v0.10.12 >/dev/null 2>&1; then
-            gh release create v0.10.12 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.12' --notes-file "$RUNNER_TEMP/v0.10.12-notes.md"
+          if ! gh release view v0.11.0 >/dev/null 2>&1; then
+            gh release create v0.11.0 --target "$GITHUB_SHA" --title 'Portfolio Site v0.11.0' --notes-file "$RUNNER_TEMP/v0.11.0-notes.md"
           else
-            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.10.12" -f sha="$GITHUB_SHA" -F force=true >/dev/null
-            gh release edit v0.10.12 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.12-notes.md"
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.11.0" -f sha="$GITHUB_SHA" -F force=true >/dev/null
+            gh release edit v0.11.0 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.11.0-notes.md"
           fi
-          gh release upload v0.10.12 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.12.zip" --clobber
+          gh release upload v0.11.0 "$RUNNER_TEMP/kimeunsuportfolio-v0.11.0.zip" --clobber
