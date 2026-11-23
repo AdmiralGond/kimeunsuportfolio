@@ -71,8 +71,13 @@
         let current = null;
         rows.forEach(([id, text]) => {
             if (id.endsWith('_keyword')) {
-                current = { title: text, body: [], table: null };
+                current = { id, title: text, reportTitle: text, body: [], table: null };
                 groups.push(current);
+            } else if (id.endsWith('_report_title')) {
+                if (!current || id !== current.id.replace('_keyword', '_report_title')) {
+                    throw Error(`Invalid report title key ${name}/${id}`);
+                }
+                current.reportTitle = text;
             } else if (current && id.endsWith('_table')) {
                 current.table = text;
             } else if (current && !id.endsWith('_title')) {
@@ -391,7 +396,7 @@
             return;
         }
         page.dataset.selected = String(index);
-        page.querySelector('.report-label').innerHTML = escapeHTML(UI.report_prefix) + rich(group.title);
+        page.querySelector('.report-label').innerHTML = escapeHTML(UI.report_prefix) + rich(group.reportTitle);
         page.querySelectorAll('.keyword-row button').forEach((b, j) => b.classList.toggle('active', j === index));
         showMedia(page, name, group.title);
         const attachments = reportAttachments(name, group);

@@ -85,12 +85,20 @@ def manifest():
         page_id = page['page']
         keyword_id = None
         body_count = 0
+        report_title_seen = False
         for string_id, text in page_strings[file]:
+            if string_id.endswith('_report_title'):
+                expected_id = keyword_id.replace('_keyword', '_report_title') if keyword_id else None
+                if string_id != expected_id or report_title_seen or body_count or not text.strip():
+                    raise ValueError(f'{page_id}: 보고서 제목 키의 위치·소속·내용이 잘못되었습니다: {string_id}')
+                report_title_seen = True
+                continue
             if string_id.endswith('_title'):
                 continue
             if string_id.endswith('_keyword'):
                 keyword_id = string_id
                 body_count = 0
+                report_title_seen = False
                 continue
             if not keyword_id:
                 continue
