@@ -14,25 +14,23 @@ jobs:
           fetch-depth: 0
       - name: Check CSV build
         run: python source/build.py check
-      - name: Publish v0.10.10
+      - name: Publish v0.10.11
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.10.zip" "$GITHUB_SHA" -- README.md index.html resource source
-          cat > "$RUNNER_TEMP/v0.10.10-notes.md" <<'EOF'
-          - v0.10.9 기준 제공된 8개 페이지 문자열 CSV의 텍스트 변경 반영
-          - CSV 내 (URL)은 사용자 표시 문자열의 하이퍼링크로 유지
-          - B1·D1의 변경된 키워드명과 이미지 연결 데이터 동기화
-          - D1 키워드 제목의 <br> 줄바꿈 표시
-          - 기존 다섯 표·스타일·레이아웃·우현으로 링크 보존
-          - CSV UTF-8 BOM 및 index.html 빌드 일치 검사
+          git archive --format=zip --output="$RUNNER_TEMP/kimeunsuportfolio-v0.10.11.zip" "$GITHUB_SHA" -- README.md index.html resource source
+          cat > "$RUNNER_TEMP/v0.10.11-notes.md" <<'EOF'
+          - D1 키워드 제목의 <br>을 실제 줄바꿈으로 표시
+          - B1 프로젝트 테스트 영상의 검은색 이미지 두 개를 유튜브 플레이어로 교체
+          - 좌우 영상 16:9 비율 및 기존 높이 181.39px 유지, 자동재생 해제
+          - 기존 키워드 본문·표·다른 이미지·레이아웃·조타 장치 동작 보존
           EOF
-          if ! gh release view v0.10.10 >/dev/null 2>&1; then
-            gh release create v0.10.10 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.10' --notes-file "$RUNNER_TEMP/v0.10.10-notes.md"
+          if ! gh release view v0.10.11 >/dev/null 2>&1; then
+            gh release create v0.10.11 --target "$GITHUB_SHA" --title 'Portfolio Site v0.10.11' --notes-file "$RUNNER_TEMP/v0.10.11-notes.md"
           else
-            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.10.10" -f sha="$GITHUB_SHA" -F force=true >/dev/null
-            gh release edit v0.10.10 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.10-notes.md"
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/v0.10.11" -f sha="$GITHUB_SHA" -F force=true >/dev/null
+            gh release edit v0.10.11 --target "$GITHUB_SHA" --notes-file "$RUNNER_TEMP/v0.10.11-notes.md"
           fi
-          gh release upload v0.10.10 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.10.zip" --clobber
+          gh release upload v0.10.11 "$RUNNER_TEMP/kimeunsuportfolio-v0.10.11.zip" --clobber

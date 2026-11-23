@@ -83,6 +83,7 @@
     });
     const profileStrings = profileById;
     const media = new Map(M.media.map(item => [item.page + '|' + item.keyword, item.paths]));
+    const videos = new Map(M.videos.map(item => [item.page + '|' + item.keyword, item.ids]));
     const state = {
         index: 0,
         busy: false,
@@ -191,8 +192,26 @@
     function showMedia(page, name, title) {
         const slots = page.querySelector('.report-media');
         slots.replaceChildren();
-        const imgs = media.get(name + '|' + title) || [];
-        page.classList.toggle('media-active', imgs.length > 0);
+        const key = name + '|' + title;
+        const clips = videos.get(key) || [];
+        const imgs = media.get(key) || [];
+        page.classList.toggle('media-active', clips.length > 0 || imgs.length > 0);
+        if (clips.length) {
+            clips.forEach((id, index) => {
+                const box = document.createElement('div');
+                const frame = document.createElement('iframe');
+                box.className = 'media-slot video-slot';
+                frame.src = 'https://www.youtube.com/embed/' + id + '?autoplay=0';
+                frame.title = (index === 0 ? '왼쪽' : '오른쪽') + ' 프로젝트 테스트 영상';
+                frame.loading = 'lazy';
+                frame.allow = 'accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                frame.allowFullscreen = true;
+                frame.referrerPolicy = 'strict-origin-when-cross-origin';
+                box.appendChild(frame);
+                slots.appendChild(box);
+            });
+            return;
+        }
         imgs.slice(0, 2).forEach(path => { const box = document.createElement('div'), img = document.createElement('img'); box.className = 'media-slot'; img.src = path; img.alt = ''; img.loading = 'lazy'; makeImageZoomable(img); box.appendChild(img); slots.appendChild(box); });
     }
     function makeImageZoomable(image) {

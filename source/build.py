@@ -63,6 +63,22 @@ def manifest():
                 raise ValueError(f"{row['page']}: 키워드가 없습니다: {row['keyword']}")
             media.append({'page': row['page'], 'keyword': row['keyword'], 'paths': paths})
 
+    videos = []
+    video_keys = set()
+    media_keys = {(item['page'], item['keyword']) for item in media}
+    for row in records(RULES / 'keyword_videos.csv'):
+        page, title = row['page'], row['keyword']
+        key = (page, title)
+        ids = [row['left_video_id'], row['right_video_id']]
+        if page == 'profile' or page not in indexed or title not in indexed[page].values():
+            raise ValueError(f'영상에 연결할 키워드가 없습니다: {page}/{title}')
+        if key in video_keys or key in media_keys:
+            raise ValueError(f'영상과 이미지의 중복 연결: {page}/{title}')
+        if any(not re.fullmatch(r'[a-zA-Z0-9_-]{11}', video_id) for video_id in ids):
+            raise ValueError(f'YouTube 영상 ID가 잘못되었습니다: {page}/{title}')
+        video_keys.add(key)
+        videos.append({'page': page, 'keyword': title, 'ids': ids})
+
     tables = {}
     referenced_table_paths = set()
     for page, file in zip(pages, string_files):
@@ -135,6 +151,7 @@ def manifest():
         'stringFiles': string_files,
         'strings': page_strings,
         'media': media,
+        'videos': videos,
         'tables': tables,
         'transitionMs': int(visual['camera_transition_ms']),
         'profileTools': tools,

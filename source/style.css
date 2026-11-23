@@ -78,6 +78,8 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 .report-media{position:absolute;z-index:1;left:21.5px;right:21.5px;bottom:23px;height:181.39px;display:flex;justify-content:space-between;pointer-events:none}
 .media-slot{display:flex;align-items:center;justify-content:center;flex:0 0 450.17px;width:450.17px;height:181.39px;overflow:hidden;pointer-events:auto;border:1px solid #f3f0e9}
 .media-slot img{display:block;height:100%;width:auto;max-width:none;max-height:none;flex-shrink:0;object-fit:unset}
+.media-slot.video-slot{border:0}
+.media-slot.video-slot iframe{display:block;width:322.47px;height:181.39px;aspect-ratio:16/9;max-width:100%;border:0;flex-shrink:0}
 #helm-control{position:absolute;right:20px;bottom:0;z-index:50;width:198px;height:88px;pointer-events:none;overflow:visible}
 .helm-frame{position:absolute;left:2px;bottom:0;width:196px;height:84px;display:block;pointer-events:none;z-index:0}
 #helm-wheel{position:absolute;left:0;bottom:-10px;width:88px;height:88px;z-index:2;background:url('../resource/helm_sprite.svg') 0 0/1408px 264px no-repeat;transform-origin:44px 44px;will-change:background-position,transform}
