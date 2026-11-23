@@ -1,0 +1,9 @@
+﻿tool,panel,order,score,maximum,icon,tooltip_id,url
+powerpoint,1,1,6,10,resource/tools/powerpoint.svg,1014,
+excel,1,2,4,10,resource/tools/excel.svg,1015,
+word,2,1,1,10,resource/tools/word.svg,1016,
+notion,2,2,7,10,resource/tools/notion.svg,1017,
+photoshop,3,1,5,10,resource/tools/photoshop.svg,1018,
+illustrator,3,2,5,10,resource/tools/illustrator.svg,1019,
+maya,4,1,4,10,resource/tools/maya.svg,1020,https://steamcommunity.com/sharedfiles/filedetails/?id=2810663053
+max,4,2,4,10,resource/tools/max.svg,1021,https://www.artstation.com/artwork/Zlo1BZ

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="게임을 개발하고, 게임을 플레이하며, 게임을 관찰한다.">
+  <title>김은수 | 서브컬처 게임 디자이너</title>
+  <link rel="stylesheet" href="source/style.css">
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+    <div id="world-layer">
+      <img id="world-grid" src="resource/grid_display.svg" alt="">
+      <img id="ship-line" src="resource/Ranger_CV4_Linework.svg" alt="">
+      <div id="world-pages">
+        <section class="world-page profile-page" data-page="profile">
+          <div id="hero"><div id="hero-first"></div><div id="hero-second"></div></div>
+          <div id="quote-profile"></div>
+          <div id="profile-photos">
+            <span class="profile-slot"><img src="resource/images/profile/Image_A1_01.png" alt=""></span>
+            <span class="profile-slot"><img src="resource/images/profile/Image_A1_02.png" alt=""></span>
+            <span class="profile-slot"><img src="resource/images/profile/Image_A1_03.png" alt=""></span>
+          </div>
+          <div id="profile-image-caption" class="profile-micro-caption"></div>
+          <div id="identity"><h2></h2><div id="identity-cells"></div></div>
+          <div id="profile-tools">
+            <img src="resource/profile_tools.svg" alt="">
+            <span class="tool-title"></span>
+            <span class="tool-title"></span>
+            <span class="tool-title"></span>
+            <span class="tool-title"></span>
+            <div id="profile-tool-bars"></div>
+          </div>
+          <div id="profile-tools-caption" class="profile-micro-caption"></div>
+        </section>
+        <div id="report-pages"></div>
+      </div>
+    </div>
+    <aside id="scroll-guide" hidden><span class="scroll-guide-text"></span><span class="scroll-guide-arrow" aria-hidden="true"></span></aside>
+    <div id="frame">
+      <img id="frame-art" src="resource/frame.svg" alt="">
+      <header class="top-ui">
+        <button id="brand" type="button"></button>
+        <nav class="top-nav">
+          <button type="button" data-target="develop"></button>
+          <button type="button" data-target="play"></button>
+          <button type="button" data-target="observe"></button>
+        </nav>
+      </header>
+      <div id="page-num" class="page-number">A1</div>
+      <nav id="arsenal"><h2></h2><div id="arsenal-items"></div></nav>
+      <footer id="footer-caption"></footer>
+    </div>
+    <div id="helm-control">
+      <img class="helm-frame" src="resource/helm_frame.svg" alt="">
+      <div id="helm-wheel" aria-hidden="true"></div>
+      <button id="starboard" class="corner-button" type="button"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span></span></button>
+    </div>
+  </div>
+</div>
+<script src="source/app.js"></script>
+</body>
+</html>
