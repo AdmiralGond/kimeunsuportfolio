@@ -121,7 +121,7 @@
         const b = document.createElement('button');
         b.type = 'button';
         b.className = 'corner-button';
-        b.innerHTML = ['tl', 'tr', 'bl', 'br'].map(c => '<span class="corner ' + c + '"></span>').join('') + '<span>' + escapeHTML(label) + '</span>';
+        b.innerHTML = ['tl', 'tr', 'bl', 'br'].map(c => '<span class="corner ' + c + '"></span>').join('') + '<span>' + rich(label) + '</span>';
         return b;
     }
     function tableHTML(table, id) {
@@ -372,7 +372,7 @@
             return;
         }
         page.dataset.selected = String(index);
-        page.querySelector('.report-label').textContent = UI.report_prefix + group.title;
+        page.querySelector('.report-label').innerHTML = escapeHTML(UI.report_prefix) + rich(group.title);
         page.querySelectorAll('.keyword-row button').forEach((b, j) => b.classList.toggle('active', j === index));
         showMedia(page, name, group.title);
         const attachments = reportAttachments(name, group);
