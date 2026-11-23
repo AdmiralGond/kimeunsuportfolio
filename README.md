@@ -9,11 +9,11 @@
 - 화면 표현: `source/style.css`, 상호작용: `source/app.js`
 - 이미지·SVG·OTF: `resource/`
 
-CSV가 콘텐츠·규칙의 원본입니다. `index.html`은 실행 진입점이며 `source/build.py`로 빌드하면 로컬 실행을 위한 데이터 사본이 HTML의 `portfolio-data`에 생성됩니다.
+CSV가 콘텐츠·규칙의 원본입니다. `index.html`은 실행 진입점이며 **`source/build.py`가 로컬 실행용 CSV 데이터 및 이미지 데이터**를 `portfolio-data`에 생성합니다. GitHub Pages에서는 해당 내장 데이터를 사용하지 않습니다.
 
 - **GitHub Pages (`https://admiralgond.github.io/kimeunsuportfolio/`)**: 브라우저가 같은 사이트의 `source/strings/*.csv`, `source/rules/*.csv` 파일을 **상대 경로**로 읽습니다. `portfolio-data` 내장 데이터는 사용하지 않습니다. CSV 변경을 GitHub Pages에 배포하면 HTML 재빌드 없이 이후 사이트 로딩에 반영됩니다.
-- **로컬 실행**: `python source/build.py build`를 실행해 CSV 데이터가 내장된 `index.html`을 갱신합니다. ZIP에 포함된 빌드본 `index.html`을 열면 내장 데이터를 사용하므로 폴더 선택·CSV의 `fetch()` 요청 없이 실행됩니다.
-- **검증**: `python source/build.py check`는 CSV와 빌드된 HTML이 일치하는지 확인하고, `python source/build.py build --dry-run`은 변경 필요 여부를 확인합니다.
+- **로컬 실행**: `python source/build.py build`를 실행해 CSV **및 PNG/도구 아이콘 원본의 바이트 데이터**가 내장된 `index.html`을 갱신합니다. 압축 해제한 ZIP의 빌드본은 별도 서버·폴더 선택·CSV `fetch()` 없이 실행됩니다. 이미지 파일 교체 후에도 빌드 명령을 다시 실행합니다.
+- **검증**: `python source/build.py check`는 CSV **및 이미지 바이트**와 로컬 빌드 데이터의 일치를 확인하고, `python source/build.py build --dry-run`은 변경 필요 여부를 확인합니다.
 
 ```bash
 python source/build.py check
@@ -54,11 +54,19 @@ python source/build.py build
 
 ## 실행 데이터와 검증
 
-- 온라인 `https:` 접속은 CSV 19개를 직접 요청하여 화면 데이터를 구성합니다. `index.html`에 내장된 데이터 사본을 참조하지 않습니다.
-- 로컬 `file:` 실행은 `source/build.py build`로 갱신한 `portfolio-data`를 사용합니다. 압축 해제한 ZIP에는 이미 빌드된 `index.html`이 포함됩니다.
+- 온라인 `https:` 접속은 CSV 19개를 직접 요청하고 PNG 이미지를 **상대 경로**로 표시합니다. `index.html`의 내장 CSV·이미지 데이터는 사용하지 않습니다.
+- 로컬 `file:` 실행은 `source/build.py build`로 갱신한 `portfolio-data`의 CSV와 이미지 바이트를 사용합니다. 압축 해제한 ZIP에는 빌드된 `index.html`이 포함됩니다.
 - CSV 파서는 UTF-8 BOM, 따옴표 안의 쉼표·줄바꿈, 표 셀의 JSON을 처리합니다.
-- `source/build.py check`는 데이터 일치, 문자열 ID, 표·이미지·영상 연결을 검증합니다.
+- `source/build.py check`는 CSV·이미지 내장 데이터 일치, 문자열 ID, 표·이미지·영상 연결, 키워드 순서별 이미지 번호를 검증합니다.
 - v0.10.12와 v0.10.13을 보존하며 이 변경본은 v0.11.0으로 관리합니다.
+
+## 키워드 이미지 번호 및 외곽선
+
+- **하나의 키워드에 연속된 두 이미지 번호**를 대응합니다. 첫 키워드 01·02, 둘째 03·04, 셋째 05·06, 넷째 07·08(좌측·우측 순서)입니다.
+- B1 첫 키워드는 YouTube 플레이어 두 개이므로 이미지 01·02 파일을 만들지 않고, 둘째 키워드부터 03·04 이미지 쌍을 연결합니다.
+- `source/rules/keyword_media.csv`와 `keyword_videos.csv`는 문자열이 아니라 **`keyword_id`**로 연결합니다. 키워드명 수정으로 이미지가 다른 항목에 연결되지 않습니다.
+- A1 프로필 이미지는 01·02·03 세 장을 기존 순서대로 사용합니다.
+- 검은색 PNG 57개는 **이미지 자체의 바깥쪽 1픽셀에 `#f3f0e9` 외곽선**이 있으며, 별도의 CSS 이미지 테두리를 사용하지 않습니다.
 
 ## 외부 영상 동작
 

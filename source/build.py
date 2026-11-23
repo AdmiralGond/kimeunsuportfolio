@@ -1,4 +1,5 @@
 import argparse
+import base64
 import csv
 import json
 import re
@@ -50,34 +51,63 @@ def manifest():
             raise ValueError(f'{page}: 키워드 문자열 ID {keyword_id!r}를 찾을 수 없습니다.')
         return indexed[page][keyword_id]
 
+    # A keyword's ordinal determines its image number pair: (01, 02), (03, 04), ...
     media = []
+    video_keys = set()
+    media_keys = set()
+    profile_images = []
+    all_image_paths = set()
+    page_codes = {page['page']: page['page_number'] for page in pages}
+    ordered_keywords = {
+        page['page']: [id for id, _ in page_strings[file] if id.endswith('_keyword')]
+        for page, file in zip(pages, string_files)
+    }
     for row in records(RULES / 'keyword_media.csv'):
+        name, key = row['page'], row['keyword_id']
         paths = [path for path in (row['left_image'], row['right_image']) if path]
+        if name == 'profile':
+            if key or len(paths) != 1:
+                raise ValueError('프로필 이미지 연결 형식 오류')
+            profile_images.extend(paths)
+        else:
+            if name not in ordered_keywords or key not in ordered_keywords[name]:
+                raise ValueError(f'이미지에 연결할 키워드 ID 오류: {name}/{key}')
+            if len(paths) != 2 or (name, key) in media_keys:
+                raise ValueError(f'이미지 2장 또는 키워드 중복 오류: {name}/{key}')
+            sequence = ordered_keywords[name].index(key) + 1
+            expected = [f'resource/images/{name}/Image_{page_codes[name]}_{2*sequence-1:02d}.png',
+                        f'resource/images/{name}/Image_{page_codes[name]}_{2*sequence:02d}.png']
+            if paths != expected:
+                raise ValueError(f'키워드 {name}/{key}: {paths} -> 기대값 {expected}')
+            media_keys.add((name, key))
+            media.append({'page': name, 'keyword_id': key, 'paths': paths})
         for path in paths:
-            if not (ROOT / path).is_file():
-                raise ValueError(f'이미지 파일을 찾을 수 없습니다: {path}')
-        if row['page'] != 'profile':
-            if len(paths) != 2:
-                raise ValueError(f"{row['page']} {row['keyword']}: 이미지가 2개 필요합니다.")
-            if row['keyword'] not in indexed[row['page']].values():
-                raise ValueError(f"{row['page']}: 키워드가 없습니다: {row['keyword']}")
-            media.append({'page': row['page'], 'keyword': row['keyword'], 'paths': paths})
+            if path in all_image_paths or not (ROOT / path).is_file():
+                raise ValueError(f'누락 또는 중복된 이미지 파일: {path}')
+            all_image_paths.add(path)
+    expected_profiles = [f'resource/images/profile/Image_A1_{number:02d}.png' for number in range(1, 4)]
+    if profile_images != expected_profiles:
+        raise ValueError(f'A1 프로필 이미지 순서 오류: {profile_images}')
+    stored_images = {path.relative_to(ROOT).as_posix() for path in (ROOT / 'resource/images').rglob('*.png')}
+    if all_image_paths != stored_images:
+        raise ValueError(f'미사용 또는 누락된 이미지 파일: {sorted(all_image_paths ^ stored_images)}')
 
     videos = []
-    video_keys = set()
-    media_keys = {(item['page'], item['keyword']) for item in media}
     for row in records(RULES / 'keyword_videos.csv'):
-        page, title = row['page'], row['keyword']
-        key = (page, title)
+        name, key = row['page'], row['keyword_id']
+        pair = (name, key)
         ids = [row['left_video_id'], row['right_video_id']]
-        if page == 'profile' or page not in indexed or title not in indexed[page].values():
-            raise ValueError(f'영상에 연결할 키워드가 없습니다: {page}/{title}')
-        if key in video_keys or key in media_keys:
-            raise ValueError(f'영상과 이미지의 중복 연결: {page}/{title}')
+        if name == 'profile' or name not in ordered_keywords or key not in ordered_keywords[name]:
+            raise ValueError(f'영상에 연결할 키워드 ID 오류: {name}/{key}')
+        if pair in video_keys or pair in media_keys:
+            raise ValueError(f'영상과 이미지의 중복 연결: {name}/{key}')
         if any(not re.fullmatch(r'[a-zA-Z0-9_-]{11}', video_id) for video_id in ids):
-            raise ValueError(f'YouTube 영상 ID가 잘못되었습니다: {page}/{title}')
-        video_keys.add(key)
-        videos.append({'page': page, 'keyword': title, 'ids': ids})
+            raise ValueError(f'YouTube 영상 ID가 잘못되었습니다: {name}/{key}')
+        video_keys.add(pair)
+        videos.append({'page': name, 'keyword_id': key, 'ids': ids})
+    expected_keys = {(name, key) for name, ids in ordered_keywords.items() for key in ids}
+    if media_keys | video_keys != expected_keys:
+        raise ValueError(f'미연결 키워드 ID: {sorted(expected_keys - (media_keys | video_keys))}')
 
     tables = {}
     referenced_table_paths = set()
@@ -148,7 +178,18 @@ def manifest():
             'maximum': int(row['maximum']), 'icon': row['icon'],
             'tooltip_id': row['tooltip_id'], 'url': row['url'],
         })
+    # Offline-built HTML snapshots images; GitHub Pages ignores the embedded map.
+    embedded_paths = sorted(all_image_paths | {tool['icon'] for tool in tools})
+    embedded_images = {}
+    for path in embedded_paths:
+        suffix = Path(path).suffix.lower()
+        mime = {'png': 'image/png', 'svg': 'image/svg+xml'}.get(suffix.lstrip('.'))
+        if not mime:
+            raise ValueError(f'지원되지 않는 로컬 빌드 이미지: {path}')
+        encoded = base64.b64encode((ROOT / path).read_bytes()).decode('ascii')
+        embedded_images[path] = f'data:{mime};base64,{encoded}'
     return {
+        'embeddedImages': embedded_images,
         'pages': names,
         'pageCodes': [page['page_number'] for page in pages],
         'camera': [
@@ -160,6 +201,7 @@ def manifest():
         'strings': page_strings,
         'media': media,
         'videos': videos,
+        'profileImages': profile_images,
         'tables': tables,
         'transitionMs': int(visual['camera_transition_ms']),
         'profileTools': tools,
@@ -170,12 +212,7 @@ def update_profile_photos(source):
     blocks = list(PROFILE_BLOCK.finditer(source))
     if len(blocks) != 1:
         raise ValueError('index.html: profile-photos 영역이 정확히 하나 있어야 합니다.')
-    paths = [
-        path
-        for row in records(RULES / 'keyword_media.csv')
-        if row['page'] == 'profile'
-        for path in (row['left_image'], row['right_image']) if path
-    ]
+    paths = [row['left_image'] for row in records(RULES / 'keyword_media.csv') if row['page'] == 'profile']
     for path in paths:
         if not (ROOT / path).is_file():
             raise ValueError(f'프로필 이미지 파일을 찾을 수 없습니다: {path}')
