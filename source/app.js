@@ -85,7 +85,7 @@
             }];
         })));
         const profileImages = mediaRows.filter(row => row.page === 'profile').flatMap(row => [row.left_image, row.right_image].filter(Boolean));
-        const media = mediaRows.filter(row => row.page !== 'profile').map(row => ({page: row.page, keyword_id: row.keyword_id, paths: [row.left_image, row.right_image].filter(Boolean)}));
+        const media = mediaRows.filter(row => row.page !== 'profile').map(row => ({page: row.page, keyword_id: row.keyword_id, paths: [row.left_image, row.right_image]}));
         const videos = videoRows.map(row => ({page: row.page, keyword_id: row.keyword_id, ids: [row.left_video_id, row.right_video_id]}));
         for (const entry of [...media, ...videos]) {
             const keywords = [...indexed[entry.page]].filter(([id]) => id.endsWith('_keyword')).map(([id]) => id);
@@ -314,12 +314,13 @@
         const key = name + '|' + keywordId;
         const clips = videos.get(key) || [];
         const imgs = media.get(key) || [];
-        page.classList.toggle('media-active', clips.length > 0 || imgs.length > 0);
+        page.classList.toggle('media-active', clips.length > 0 || imgs.some(Boolean));
         if (clips.length) {
             clips.forEach((id, index) => {
                 const box = document.createElement('div');
                 const frame = document.createElement('iframe');
                 box.className = 'media-slot video-slot';
+                box.style.gridColumn = String(index + 1);
                 frame.src = 'https://www.youtube.com/embed/' + id + '?autoplay=0';
                 frame.title = (index === 0 ? '왼쪽' : '오른쪽') + ' 프로젝트 테스트 영상';
                 frame.loading = 'lazy';
@@ -331,13 +332,16 @@
             });
             return;
         }
-        imgs.slice(0, 2).forEach(path => {
+        imgs.slice(0, 2).forEach((path, index) => {
+            if (!path) return;
             const box = document.createElement('div'), img = document.createElement('img');
             box.className = 'media-slot';
+            box.style.gridColumn = String(index + 1);
             img.alt = '';
             img.loading = 'lazy';
-            // Live CSV can still refer to intentionally removed assets; leave their slots empty.
+            // A failed image must not move another image or affect a newer keyword.
             img.addEventListener('error', () => {
+                if (box.parentNode !== slots) return;
                 box.remove();
                 page.classList.toggle('media-active', slots.children.length > 0);
             }, { once: true });

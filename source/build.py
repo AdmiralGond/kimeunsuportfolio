@@ -72,19 +72,20 @@ def manifest():
         else:
             if name not in ordered_keywords or key not in ordered_keywords[name]:
                 raise ValueError(f'이미지에 연결할 키워드 ID 오류: {name}/{key}')
-            if len(paths) != 2 or (name, key) in media_keys:
-                raise ValueError(f'이미지 2장 또는 키워드 중복 오류: {name}/{key}')
+            if (name, key) in media_keys:
+                raise ValueError(f'이미지 키워드 중복 오류: {name}/{key}')
             media_keys.add((name, key))
-            # Deliberately removed image assets are not included in the offline build.
+            # Preserve left/right slot positions, including empty fields.
             media.append({'page': name, 'keyword_id': key,
-                          'paths': [path for path in paths if (ROOT / path).is_file()]})
+                          'paths': [row['left_image'], row['right_image']]})
         for path in paths:
             asset = Path(path)
             if (not path.startswith('resource/images/') or asset.is_absolute() or '..' in asset.parts
                     or asset.suffix.lower() not in {'.png', '.gif'}):
                 raise ValueError(f'잘못된 이미지 경로: {path}')
-            if (ROOT / path).is_file():
-                all_image_paths.add(path)
+            if not (ROOT / path).is_file():
+                raise ValueError(f'이미지 파일 없음: {path}')
+            all_image_paths.add(path)
     expected_profiles = [f'resource/images/profile/Image_A1_{number:02d}.png' for number in range(1, 4)]
     if profile_images != expected_profiles:
         raise ValueError(f'A1 프로필 이미지 순서 오류: {profile_images}')

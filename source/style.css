@@ -40,7 +40,7 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 #quote-profile{position:absolute;left:249.62px;top:275px;width:1035px;font-size:16px;line-height:1.45;color:#f1f8f9}
 #quote-profile .credit{font-size:14px;font-weight:300;color:#e2edf0}
 #profile-photos{position:absolute;left:250.12px;top:354.29px;display:grid;grid-template-columns:104.09px 104.09px 210.11px;gap:28.08px;height:129.42px;overflow:visible}
-#profile-photos img{display:block;width:auto;max-width:none;height:129.42px;object-fit:unset;flex-shrink:0;border:0}
+#profile-photos img{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;flex-shrink:0;border:0}
 .profile-micro-caption,.scroll-guide-text{font-family:Nexon,sans-serif;font-size:8px;font-weight:700;line-height:1.2;letter-spacing:.1px;color:#f1f8f9}
 .profile-micro-caption{position:absolute;white-space:nowrap;pointer-events:none}
 #profile-image-caption{left:calc(250.12px + 104.09px + 28.08px);top:487.5px}
@@ -76,9 +76,9 @@ a{color:#81eee5;text-decoration:underline;text-underline-offset:3px}
 .report-body th{background:#18495b;color:#8af5e6;font-size:14px;font-weight:300;line-height:1.45}
 .report-body td{font-size:12px;font-weight:400;line-height:1.45}
 .report-body a{overflow-wrap:anywhere}
-.report-media{position:absolute;z-index:1;left:21.5px;right:21.5px;bottom:23px;height:181.39px;display:flex;justify-content:space-between;pointer-events:none}
+.report-media{position:absolute;z-index:1;left:21.5px;right:21.5px;bottom:23px;height:181.39px;display:grid;grid-template-columns:repeat(2,450.17px);justify-content:space-between;pointer-events:none}
 .media-slot{display:flex;align-items:center;justify-content:center;flex:0 0 450.17px;width:450.17px;height:181.39px;overflow:hidden;pointer-events:auto}
-.media-slot img{display:block;height:100%;width:auto;max-width:none;max-height:none;flex-shrink:0;object-fit:unset}
+.media-slot img{display:block;width:auto;height:auto;max-width:100%;max-height:100%;flex-shrink:0;object-fit:contain}
 .media-slot.video-slot{border:0}
 .media-slot.video-slot iframe{display:block;width:322.47px;height:181.39px;aspect-ratio:16/9;max-width:100%;border:0;flex-shrink:0}
 #helm-control{position:absolute;right:20px;bottom:0;z-index:50;width:198px;height:88px;pointer-events:none;overflow:visible}
