@@ -51,7 +51,7 @@
         const [pagesRaw, visualRows, mediaRows, videoRows, toolRows] = await Promise.all([
             get('source/rules/pages.csv', ['page', 'page_number', 'order', 'ship_source_center_x', 'ship_source_center_y', 'ship_scale', 'world_anchor_type', 'guide_rect_x', 'guide_rect_y', 'guide_rect_width', 'guide_rect_height']),
             get('source/rules/visual.csv', ['rule', 'value']),
-            get('source/rules/keyword_media.csv', ['page', 'keyword_id', 'left_image', 'right_image']),
+            get('source/rules/keyword_media.csv', ['page', 'keyword_id', 'left_image', 'right_image', 'left_caption_id', 'right_caption_id']),
             get('source/rules/keyword_videos.csv', ['page', 'keyword_id', 'left_video_id', 'right_video_id']),
             get('source/rules/profile_tools.csv', ['tool', 'panel', 'order', 'score', 'maximum', 'icon', 'tooltip_id', 'url'])
         ]);
@@ -85,11 +85,18 @@
             }];
         })));
         const profileImages = mediaRows.filter(row => row.page === 'profile').flatMap(row => [row.left_image, row.right_image].filter(Boolean));
-        const media = mediaRows.filter(row => row.page !== 'profile').map(row => ({page: row.page, keyword_id: row.keyword_id, paths: [row.left_image, row.right_image]}));
+        const media = mediaRows.filter(row => row.page !== 'profile').map(row => ({page: row.page, keyword_id: row.keyword_id, paths: [row.left_image, row.right_image], captionIds: [row.left_caption_id, row.right_caption_id]}));
         const videos = videoRows.map(row => ({page: row.page, keyword_id: row.keyword_id, ids: [row.left_video_id, row.right_video_id]}));
         for (const entry of [...media, ...videos]) {
             const keywords = [...indexed[entry.page]].filter(([id]) => id.endsWith('_keyword')).map(([id]) => id);
             if (!keywords.includes(entry.keyword_id)) throw Error(`이미지 또는 영상의 키워드 연결 오류: ${entry.page}/${entry.keyword_id}`);
+        }
+        for (const entry of media) {
+            entry.paths.forEach((path, index) => {
+                const id = entry.captionIds[index];
+                const expected = entry.keyword_id.replace('_keyword', (index === 0 ? '_left' : '_right') + '_caption');
+                if (path ? (id !== expected || !indexed[entry.page].has(id)) : id !== '') throw Error(`이미지 캡션 연결 오류: ${entry.page}/${entry.keyword_id}`);
+            });
         }
         return {
             pages: names,
@@ -181,6 +188,7 @@
         const groups = [];
         let current = null;
         rows.forEach(([id, text]) => {
+            if (id.endsWith('_caption')) return;
             if (id.endsWith('_keyword')) {
                 current = { id, title: text, reportTitle: text, body: [], table: null };
                 groups.push(current);
@@ -198,7 +206,7 @@
         content[name] = { rows, groups };
     });
     const profileStrings = profileById;
-    const media = new Map(M.media.map(item => [item.page + '|' + item.keyword_id, item.paths]));
+    const media = new Map(M.media.map(item => [item.page + '|' + item.keyword_id, item]));
     const videos = new Map(M.videos.map(item => [item.page + '|' + item.keyword_id, item.ids]));
     const imageSource = path => location.protocol === 'file:'
         ? (M.embeddedImages?.[path] || path)
@@ -313,7 +321,8 @@
         slots.replaceChildren();
         const key = name + '|' + keywordId;
         const clips = videos.get(key) || [];
-        const imgs = media.get(key) || [];
+        const entry = media.get(key);
+        const imgs = entry?.paths || [];
         page.classList.toggle('media-active', clips.length > 0 || imgs.some(Boolean));
         if (clips.length) {
             clips.forEach((id, index) => {
@@ -334,7 +343,7 @@
         }
         imgs.slice(0, 2).forEach((path, index) => {
             if (!path) return;
-            const box = document.createElement('div'), img = document.createElement('img');
+            const box = document.createElement('figure'), img = document.createElement('img');
             box.className = 'media-slot';
             box.style.gridColumn = String(index + 1);
             img.alt = '';
@@ -347,6 +356,13 @@
             }, { once: true });
             makeImageZoomable(img);
             box.appendChild(img);
+            const caption = getText(name, entry.captionIds[index]);
+            if (caption) {
+                const label = document.createElement('figcaption');
+                label.className = 'media-caption';
+                label.textContent = caption;
+                box.appendChild(label);
+            }
             slots.appendChild(box);
             img.src = imageSource(path);
         });
@@ -384,7 +400,7 @@
         let fade = null;
         const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
         const rect = element => {
-            const box = element.closest('.profile-slot, .media-slot') || element;
+            const box = element.closest('.profile-slot') || element;
             const bounds = box.getBoundingClientRect();
             return { left: bounds.left, top: bounds.top, width: bounds.width, height: bounds.height };
         };

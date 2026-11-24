@@ -57,6 +57,7 @@ def manifest():
     media_keys = set()
     profile_images = []
     all_image_paths = set()
+    caption_keys = set()
     page_codes = {page['page']: page['page_number'] for page in pages}
     ordered_keywords = {
         page['page']: [id for id, _ in page_strings[file] if id.endswith('_keyword')]
@@ -66,7 +67,7 @@ def manifest():
         name, key = row['page'], row['keyword_id']
         paths = [path for path in (row['left_image'], row['right_image']) if path]
         if name == 'profile':
-            if key or len(paths) != 1:
+            if key or len(paths) != 1 or row['left_caption_id'] or row['right_caption_id']:
                 raise ValueError('프로필 이미지 연결 형식 오류')
             profile_images.extend(paths)
         else:
@@ -76,8 +77,23 @@ def manifest():
                 raise ValueError(f'이미지 키워드 중복 오류: {name}/{key}')
             media_keys.add((name, key))
             # Preserve left/right slot positions, including empty fields.
+            caption_ids = [row['left_caption_id'], row['right_caption_id']]
+            for side, caption_id in zip(('left', 'right'), caption_ids):
+                path = row[f'{side}_image']
+                expected = key.replace('_keyword', f'_{side}_caption')
+                if not path:
+                    if caption_id:
+                        raise ValueError(f'빈 이미지 슬롯에 캡션 연결: {name}/{key}/{side}')
+                    continue
+                if caption_id != expected or caption_id not in indexed[name]:
+                    raise ValueError(f'이미지 캡션 연결 오류: {name}/{key}/{side}')
+                text = indexed[name][caption_id]
+                if text and not text.startswith('※ '):
+                    raise ValueError(f'캡션 접두사 오류: {name}/{caption_id}')
+                caption_keys.add((name, caption_id))
             media.append({'page': name, 'keyword_id': key,
-                          'paths': [row['left_image'], row['right_image']]})
+                          'paths': [row['left_image'], row['right_image']],
+                          'captionIds': caption_ids})
         for path in paths:
             asset = Path(path)
             if (not path.startswith('resource/images/') or asset.is_absolute() or '..' in asset.parts
@@ -94,6 +110,11 @@ def manifest():
                      if path.is_file() and path.suffix.lower() in {'.png', '.gif'}}
     if all_image_paths != stored_images:
         raise ValueError(f'미사용 이미지 파일: {sorted(all_image_paths ^ stored_images)}')
+
+    actual_caption_keys = {(name, id) for name, values in indexed.items()
+                           for id in values if id.endswith('_caption')}
+    if actual_caption_keys != caption_keys:
+        raise ValueError(f'미연결 캡션 ID: {sorted(actual_caption_keys ^ caption_keys)}')
 
     videos = []
     for row in records(RULES / 'keyword_videos.csv'):
@@ -120,6 +141,8 @@ def manifest():
         body_count = 0
         report_title_seen = False
         for string_id, text in page_strings[file]:
+            if string_id.endswith('_caption'):
+                continue
             if string_id.endswith('_report_title'):
                 expected_id = keyword_id.replace('_keyword', '_report_title') if keyword_id else None
                 if string_id != expected_id or report_title_seen or body_count or not text.strip():
